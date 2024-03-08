@@ -41,10 +41,10 @@ public class Client {
     // create a new thread for server messages handling
     new Thread(new ReceivedMessagesHandler(client.getInputStream())).start();
 
-    // read messages from keyboard and send to server
+    // read msgs from keyboard and sends to server
     System.out.println("Messages: \n");
 
-    // while new messages
+    // while new msg
     while (sc.hasNextLine()) {
       output.println(sc.nextLine());
     }
@@ -65,7 +65,7 @@ class ReceivedMessagesHandler implements Runnable {
   }
 
   public void run() {
-    // receive server messages and print out to screen
+    // take server messages and prints to screen
     Scanner s = new Scanner(server);
     String tmp = "";
     while (s.hasNextLine()) {
@@ -86,7 +86,6 @@ class ReceivedMessagesHandler implements Runnable {
     s.close();
   }
 
-  // I could use a javax.xml.parsers but the goal of Client.java is to keep everything tight and simple
   public static String getTagValue(String xml){
     return  xml.split(">")[2].split("<")[0] + xml.split("<span>")[1].split("</span>")[0];
   }

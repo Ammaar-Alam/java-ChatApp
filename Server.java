@@ -52,9 +52,7 @@ public class Server {
 
       // Welcome msg
       newUser.getOutStream().println(
-          "<img src='https://www.kizoa.fr/img/e8nZC.gif' height='42' width='42'>"
-          + "<b>Welcome</b> " + newUser.toString() +
-          "<img src='https://www.kizoa.fr/img/e8nZC.gif' height='42' width='42'>"
+          "<b>Welcome</b> " + newUser.toString() +
           );
 
       // create a new thread for newUser incoming messages handling
