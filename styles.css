@@ -1,125 +1,112 @@
-/* Main body and html styling for full page height and no margin */
+/* General styling for the dark theme */
 body,
 html {
     height: 100%;
     margin: 0;
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-    background-color: #121212; /* Dark background for the whole page */
+    background: #121212; /* Dark background for the whole page */
     display: flex;
     justify-content: center;
     align-items: center;
+    color: #e0e0e0;
 }
 
-/* Central container for chat app with auto margins for centering */
-.chat-container {
-    width: 80%; /* width of the whole chat app box */
-    max-width: 1080px; /* maximum width */
-    min-height: 600px; /* minimum height */
-    background-color: #1f1f1f; /* dark background for the chat container */
-    border-radius: 10px; /* rounded corners for the chat container */
-    box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.75); /* subtle shadow for depth */
+/* Chat box styling */
+.chat-box {
+    width: 80%; /* Width of the chat box */
+    max-width: 35rem; /* Maximum width */
+    min-height: 40rem; /* Minimum height */
+    background: rgba(255, 255, 255, 0.1); /* Semi-transparent background */
+    border-radius: 10px; /* Rounded corners for the chat box */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); /* Shadow for depth */
+    overflow: hidden; /* Hide overflow */
     display: flex;
-    flex-direction: column; /* stack children vertically */
-    overflow: hidden; /* hide overflow */
+    flex-direction: column; /* Stack children vertically */
 }
 
-/* Header styling */
+/* Header with gradient background */
 .chat-header {
-    background-color: #2a2a2a;
-    color: #fff;
-    padding: 15px;
+    padding: 1rem;
+    background: linear-gradient(to right, #6a11cb 0%, #2575fc 100%);
     text-align: center;
-    font-size: 1.2rem;
+    font-size: 1.5rem;
+    font-weight: bold;
 }
 
 /* Message area styling */
 .messages {
     flex-grow: 1;
-    background-color: #333;
-    padding: 20px;
+    padding: 1rem;
     overflow-y: auto;
-    color: #e0e0e0;
+    background-color: #161619; /* Darker background for the message area */
 }
 
-/* User list styling */
+/* Input area styling */
+.input-area {
+    padding: 1rem;
+    background: linear-gradient(to right, #434343 0%, black 100%);
+    display: flex;
+    align-items: center;
+}
+
+.input-area input {
+    flex-grow: 1;
+    padding: 0.5rem;
+    margin-right: 1rem;
+    border: none;
+    border-radius: 4px;
+    font-size: 1rem;
+}
+
+.input-area button {
+    padding: 0.5rem 1rem;
+    background-color: #6a11cb; /* Button color */
+    border: none;
+    border-radius: 4px;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s; /* Transition for button hover */
+}
+
+.input-area button:hover {
+    background-color: #2575fc; /* Button hover color */
+}
+
+/* Username and user list styling */
+.username-form,
 .user-list {
-    background-color: #252526; /* slightly lighter than message area for contrast */
-    padding: 15px;
+    display: none; /* Hidden by default, shown after entering a username */
+}
+
+.user-list {
+    background-color: #202020; /* Dark background for user list */
+    padding: 0.5rem;
+    border-radius: 10px;
 }
 
 .user-list ul {
-    list-style-type: none;
+    list-style: none;
     padding: 0;
     margin: 0;
 }
 
 .user-list li {
-    padding: 10px;
+    padding: 0.5rem;
     border-bottom: 1px solid #333;
 }
 
-/* Send message form styling */
-#messageForm {
-    background-color: #252526;
-    padding: 15px;
-    display: flex;
-}
-
-#messageInput {
-    flex-grow: 1;
-    padding: 10px;
-    border: 1px solid #555; /* subtle border for the input */
-    background: #333;
-    color: white;
-    margin-right: 10px;
-    border-radius: 4px;
-}
-
-#messageForm button {
-    padding: 10px 20px;
-    background-color: #0078d7; /* a pop of color for the button */
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-}
-
-#messageForm button:hover {
-    background-color: #0056a3; /* darker shade on hover for button */
-}
-
-/* Initial login form styling */
-#loginForm {
-    display: none; /* Initially hidden, to be displayed via JS after entering username */
-}
-
-/* Message styling */
+/* Message item styling */
 .message-item {
-    padding: 10px;
-    margin-bottom: 10px;
+    padding: 0.5rem;
     border-radius: 4px;
-    background-color: #252526; /* same as user list for consistency */
-    color: #e0e0e0; /* white-ish text color for readability */
-    margin-right: 20px; /* space on the right */
-    word-wrap: break-word; /* ensure long words do not overflow */
+    background-color: #252525; /* Dark background for messages */
+    margin-bottom: 1rem;
 }
 
-/* Align messages to the right for the user */
-.msg-from-me {
-    background-color: #0a5275; /* distinguishable color for the user's messages */
-    align-self: flex-end;
-}
-
-/* Align messages to the left for others */
-.msg-from-others {
-    background-color: #262626; /* slightly different background for others' messages */
-    align-self: flex-start;
-}
-
-/* Add responsiveness to chat app */
+/* Media queries for responsive design */
 @media (max-width: 768px) {
-    .chat-container {
-        width: 95%; /* make the chat app full width on smaller screens */
-        min-height: 400px; /* reduce the minimum height on smaller screens */
+    .chat-box {
+        width: 95%;
+        min-height: 30rem;
     }
 }
