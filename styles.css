@@ -1,112 +1,98 @@
-/* General styling for the dark theme */
 body,
 html {
     height: 100%;
     margin: 0;
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-    background: #121212; /* Dark background for the whole page */
+    background: #ededed; /* Light gray background */
     display: flex;
     justify-content: center;
     align-items: center;
-    color: #e0e0e0;
 }
 
-/* Chat box styling */
-.chat-box {
-    width: 80%; /* Width of the chat box */
-    max-width: 35rem; /* Maximum width */
-    min-height: 40rem; /* Minimum height */
-    background: rgba(255, 255, 255, 0.1); /* Semi-transparent background */
-    border-radius: 10px; /* Rounded corners for the chat box */
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); /* Shadow for depth */
-    overflow: hidden; /* Hide overflow */
-    display: flex;
-    flex-direction: column; /* Stack children vertically */
-}
-
-/* Header with gradient background */
-.chat-header {
-    padding: 1rem;
-    background: linear-gradient(to right, #6a11cb 0%, #2575fc 100%);
-    text-align: center;
-    font-size: 1.5rem;
-    font-weight: bold;
-}
-
-/* Message area styling */
-.messages {
-    flex-grow: 1;
-    padding: 1rem;
-    overflow-y: auto;
-    background-color: #161619; /* Darker background for the message area */
-}
-
-/* Input area styling */
-.input-area {
-    padding: 1rem;
-    background: linear-gradient(to right, #434343 0%, black 100%);
-    display: flex;
-    align-items: center;
-}
-
-.input-area input {
-    flex-grow: 1;
-    padding: 0.5rem;
-    margin-right: 1rem;
-    border: none;
-    border-radius: 4px;
-    font-size: 1rem;
-}
-
-.input-area button {
-    padding: 0.5rem 1rem;
-    background-color: #6a11cb; /* Button color */
-    border: none;
-    border-radius: 4px;
-    color: white;
-    cursor: pointer;
-    transition: background-color 0.3s; /* Transition for button hover */
-}
-
-.input-area button:hover {
-    background-color: #2575fc; /* Button hover color */
-}
-
-/* Username and user list styling */
-.username-form,
-.user-list {
-    display: none; /* Hidden by default, shown after entering a username */
-}
-
-.user-list {
-    background-color: #202020; /* Dark background for user list */
-    padding: 0.5rem;
+.chat-container {
+    display: grid;
+    grid-template-columns: 1fr 3fr;
+    width: 80%;
+    max-width: 900px;
+    height: 500px;
+    background: #fff;
     border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+.user-list {
+    background-color: #333;
+    color: #fff;
+    padding: 10px;
+    overflow-y: auto;
+    overflow-x: auto;
+    width: 250px;
+}
+
+.user-list h3 {
+    text-align: center;
 }
 
 .user-list ul {
     list-style: none;
     padding: 0;
-    margin: 0;
 }
 
 .user-list li {
-    padding: 0.5rem;
-    border-bottom: 1px solid #333;
+    padding: 10px 0;
+    border-bottom: 1px solid #474747;
+    text-align: center;
 }
 
-/* Message item styling */
-.message-item {
-    padding: 0.5rem;
+.chat-box {
+    display: flex;
+    flex-direction: column;
+}
+
+.chat-header {
+    padding: 20px;
+    background: #007bff;
+    color: white;
+    text-align: center;
+    font-size: 24px;
+}
+
+.messages {
+    flex-grow: 1;
+    overflow-y: auto;
+    padding: 20px;
+    background-color: #f7f7f7;
+}
+
+.input-area {
+    padding: 20px;
+    display: flex;
+    border-top: 1px solid #ccc;
+}
+
+.input-area input {
+    flex-grow: 1;
+    padding: 10px;
+    border: 1px solid #ccc;
     border-radius: 4px;
-    background-color: #252525; /* Dark background for messages */
-    margin-bottom: 1rem;
+    margin-right: 10px;
 }
 
-/* Media queries for responsive design */
-@media (max-width: 768px) {
-    .chat-box {
-        width: 95%;
-        min-height: 30rem;
-    }
+.input-area button {
+    padding: 10px 20px;
+    background-color: #007bff;
+    border: none;
+    border-radius: 4px;
+    color: white;
+    cursor: pointer;
+}
+
+.username-form {
+    position: absolute;
+    width: 300px;
+    background: whitesmoke;
+    padding: 20px;
+    box-shadow: 10px 10px 10px rgba(0, 0, 0, 0.3);
+    border-radius: 15px;
 }

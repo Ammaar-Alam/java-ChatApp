@@ -16,25 +16,28 @@ io.on("connection", (socket) => {
 
   socket.on("disconnect", () => {
     if (addedUser) {
-      // Broadcast a user left notification
-      socket.broadcast.emit("user left", socket.username);
+      io.emit("user left", socket.username);
+      console.log(`${socket.username} disconnected`);
     }
-    console.log("Client disconnected");
   });
 
   socket.on("add user", (username) => {
     if (addedUser) return;
-
-    // Store the username in the socket session
     socket.username = username;
     addedUser = true;
-    socket.broadcast.emit("user joined", { username: socket.username });
+    io.emit("user joined", { username: socket.username });
   });
 
   socket.on("sendMessage", (data) => {
-    // Broadcast message to all clients
+    if (!addedUser) {
+      // Assume the username is available but the user hasn't been flagged as added.
+      addedUser = true; // Mark the user as added.
+      // Check if the username is set; if not, default to "Anonymous"
+      socket.username = socket.username || "Anonymous";
+      io.emit("user joined", { username: socket.username });
+    }
     io.emit("message", {
-      username: socket.username || "Anonymous",
+      username: socket.username,
       message: data.message,
     });
   });

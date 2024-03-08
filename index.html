@@ -4,11 +4,33 @@
         <meta charset="UTF-8" />
         <title>Chat Application</title>
         <link rel="stylesheet" href="styles.css" />
-        <script src="/socket.io/socket.io.js"></script>
+        <script src="backend/node_modules/socket.io/client-dist/socket.io.js"></script>
         <script defer src="backend/script.js"></script>
     </head>
     <body>
-        <form id="loginForm">
+        <div class="chat-container">
+            <div class="user-list">
+                <h3>Users</h3>
+                <ul id="users">
+                    <!-- Dynamically populated user list -->
+                </ul>
+            </div>
+            <div class="chat-box">
+                <div class="chat-header">Alam's Web Chat</div>
+                <ul id="messages" class="messages">
+                    <!-- Dynamically populated chat messages -->
+                </ul>
+                <form id="form" class="input-area">
+                    <input
+                        id="input"
+                        autocomplete="off"
+                        placeholder="Type your message here..."
+                    />
+                    <button type="submit">Send</button>
+                </form>
+            </div>
+        </div>
+        <form id="loginForm" class="username-form">
             <input
                 type="text"
                 id="usernameInput"
@@ -17,16 +39,5 @@
             />
             <button type="submit">Join Chat</button>
         </form>
-        <div id="chat">
-            <ul id="messages"></ul>
-            <form id="form" action="">
-                <input
-                    id="input"
-                    autocomplete="off"
-                    placeholder="Type your message here..."
-                />
-                <button>Send</button>
-            </form>
-        </div>
     </body>
 </html>

@@ -1,28 +1,38 @@
 document.addEventListener("DOMContentLoaded", () => {
   const socket = io();
   const loginForm = document.getElementById("loginForm");
-  const chat = document.getElementById("chat");
+  const chatContainer = document.querySelector(".chat-container");
   const messages = document.getElementById("messages");
   const form = document.getElementById("form");
   const input = document.getElementById("input");
   const usernameInput = document.getElementById("usernameInput");
+  const joinButton = loginForm.querySelector('button[type="submit"]');
 
   let username = "";
 
+  // Listen for Enter key press to submit the username
+  usernameInput.addEventListener("keypress", function (e) {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      joinButton.click();
+    }
+  });
+
   loginForm.onsubmit = function (e) {
     e.preventDefault();
-    username = usernameInput.value;
+    username = usernameInput.value.trim();
     if (username) {
-      chat.style.display = "block"; // Show chat window
-      loginForm.style.display = "none"; // Hide login
       socket.emit("add user", username);
+      chatContainer.style.display = "flex"; // Show chat window
+      loginForm.style.display = "none"; // Hide login
+      input.focus(); // Focus the message input
     }
   };
 
   form.onsubmit = function (e) {
     e.preventDefault();
-    if (input.value) {
-      socket.emit("sendMessage", { message: input.value, username: username });
+    if (input.value.trim()) {
+      socket.emit("sendMessage", { message: input.value });
       input.value = "";
     }
   };
@@ -30,10 +40,31 @@ document.addEventListener("DOMContentLoaded", () => {
   socket.on("message", (data) => {
     const item = document.createElement("li");
     item.classList.add(data.username === username ? "msg-from-me" : "msg-from-others");
-    item.innerHTML = `<strong>${data.username}</strong>: ${data.message}`;
+    item.textContent = `${data.username}: ${data.message}`;
     messages.appendChild(item);
-    window.scrollTo(0, document.body.scrollHeight);
+    messages.scrollTop = messages.scrollHeight;
+  });
+
+  socket.on("user joined", (data) => {
+    const existingUsers = Array.from(document.getElementById("users").children).map(
+      (userLi) => userLi.textContent,
+    );
+
+    if (!existingUsers.includes(data.username)) {
+      const userItem = document.createElement("li");
+      userItem.textContent = data.username;
+      document.getElementById("users").appendChild(userItem);
+    }
+  });
+
+  socket.on("user left", (username) => {
+    const userList = document.getElementById("users");
+    const userItems = userList.getElementsByTagName("li");
+    for (let item of userItems) {
+      if (item.textContent === username) {
+        userList.removeChild(item);
+        break;
+      }
+    }
   });
 });
-
-// Modify the server-side script to handle 'add user' and include usernames in messages.
