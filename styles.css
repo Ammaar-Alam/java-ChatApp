@@ -12,8 +12,8 @@ html {
 
 /* Central container for chat app with auto margins for centering */
 .chat-container {
-    width: 60%; /* width of the whole chat app box */
-    max-width: 800px; /* maximum width */
+    width: 80%; /* width of the whole chat app box */
+    max-width: 1080px; /* maximum width */
     min-height: 600px; /* minimum height */
     background-color: #1f1f1f; /* dark background for the chat container */
     border-radius: 10px; /* rounded corners for the chat container */
