@@ -2,31 +2,36 @@
 <html lang="en">
     <head>
         <meta charset="UTF-8" />
-        <title>Chat Application</title>
+        <title>Chat App</title>
         <link rel="stylesheet" href="styles.css" />
-        <script src="/socket.io/socket.io.js"></script>
-        <script defer src="backend/script.js"></script>
     </head>
     <body>
-        <form id="loginForm">
-            <input
-                type="text"
-                id="usernameInput"
-                autocomplete="off"
-                placeholder="Enter your nickname"
-            />
-            <button type="submit">Join Chat</button>
-        </form>
-        <div id="chat">
-            <ul id="messages"></ul>
-            <form id="form" action="">
+        <div class="chat-container">
+            <div class="chat-header">
+                <h2>Chat Room</h2>
+            </div>
+
+            <div class="user-list">
+                <h3>Users</h3>
+                <ul id="users"></ul>
+            </div>
+
+            <div class="messages" id="messageList">
+                <!-- Messages will be displayed here -->
+            </div>
+
+            <div class="chat-footer">
                 <input
-                    id="input"
-                    autocomplete="off"
+                    type="text"
+                    id="messageInput"
+                    class="input-message"
                     placeholder="Type your message here..."
                 />
-                <button>Send</button>
-            </form>
+                <button class="send-button">Send</button>
+            </div>
         </div>
+
+        <script src="/socket.io/socket.io.js"></script>
+        <script src="script.js"></script>
     </body>
 </html>

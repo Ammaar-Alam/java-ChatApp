@@ -1,89 +1,125 @@
+/* Main body and html styling for full page height and no margin */
 body,
 html {
     height: 100%;
     margin: 0;
-    font-family: Arial, sans-serif;
-}
-
-.chat-container {
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    background-color: #121212; /* Dark background for the whole page */
     display: flex;
-    height: 100%;
+    justify-content: center;
+    align-items: center;
 }
 
-.user-list {
-    width: 20%;
-    background-color: #f2f2f2;
+/* Central container for chat app with auto margins for centering */
+.chat-container {
+    width: 60%; /* width of the whole chat app box */
+    max-width: 800px; /* maximum width */
+    min-height: 600px; /* minimum height */
+    background-color: #1f1f1f; /* dark background for the chat container */
+    border-radius: 10px; /* rounded corners for the chat container */
+    box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.75); /* subtle shadow for depth */
+    display: flex;
+    flex-direction: column; /* stack children vertically */
+    overflow: hidden; /* hide overflow */
+}
+
+/* Header styling */
+.chat-header {
+    background-color: #2a2a2a;
+    color: #fff;
+    padding: 15px;
+    text-align: center;
+    font-size: 1.2rem;
+}
+
+/* Message area styling */
+.messages {
+    flex-grow: 1;
+    background-color: #333;
     padding: 20px;
+    overflow-y: auto;
+    color: #e0e0e0;
+}
+
+/* User list styling */
+.user-list {
+    background-color: #252526; /* slightly lighter than message area for contrast */
+    padding: 15px;
 }
 
 .user-list ul {
     list-style-type: none;
     padding: 0;
+    margin: 0;
 }
 
-.chat-window {
-    width: 80%;
-    display: flex;
-    flex-direction: column;
+.user-list li {
+    padding: 10px;
+    border-bottom: 1px solid #333;
 }
 
-.chat-header {
-    background-color: #333;
-    color: white;
-    padding: 20px;
-    text-align: center;
-}
-
-.messages {
-    flex-grow: 1;
-    padding: 20px;
-    overflow-y: auto;
-    background-color: #e5e5e5;
-}
-
+/* Send message form styling */
 #messageForm {
+    background-color: #252526;
+    padding: 15px;
     display: flex;
-    padding: 20px;
-    background-color: #f2f2f2;
 }
 
 #messageInput {
     flex-grow: 1;
+    padding: 10px;
+    border: 1px solid #555; /* subtle border for the input */
+    background: #333;
+    color: white;
     margin-right: 10px;
+    border-radius: 4px;
 }
 
 #messageForm button {
-    padding: 10px;
+    padding: 10px 20px;
+    background-color: #0078d7; /* a pop of color for the button */
+    color: white;
+    border: none;
+    border-radius: 4px;
     cursor: pointer;
 }
 
+#messageForm button:hover {
+    background-color: #0056a3; /* darker shade on hover for button */
+}
+
+/* Initial login form styling */
 #loginForm {
-    margin-bottom: 1em;
-    text-align: center;
+    display: none; /* Initially hidden, to be displayed via JS after entering username */
 }
 
-#usernameInput {
-    margin-right: 0.5em;
-    padding: 0.5em;
+/* Message styling */
+.message-item {
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 4px;
+    background-color: #252526; /* same as user list for consistency */
+    color: #e0e0e0; /* white-ish text color for readability */
+    margin-right: 20px; /* space on the right */
+    word-wrap: break-word; /* ensure long words do not overflow */
 }
 
-#chat {
-    display: none; /* hide until a username is entered */
-}
-
-/* message list styling */
-#messages li {
-    padding: 5px 10px;
-    margin-bottom: 0.2em;
-    border-radius: 5px;
-    background: #f9f9f9;
-}
-
-/* style different message types */
+/* Align messages to the right for the user */
 .msg-from-me {
-    background: #dcf8c6;
+    background-color: #0a5275; /* distinguishable color for the user's messages */
+    align-self: flex-end;
 }
 
+/* Align messages to the left for others */
 .msg-from-others {
-    background: #fff;
+    background-color: #262626; /* slightly different background for others' messages */
+    align-self: flex-start;
+}
+
+/* Add responsiveness to chat app */
+@media (max-width: 768px) {
+    .chat-container {
+        width: 95%; /* make the chat app full width on smaller screens */
+        min-height: 400px; /* reduce the minimum height on smaller screens */
+    }
 }

@@ -1,37 +1,42 @@
+// Assuming that the server emits 'userList' event with the list of users.
+// And 'newMessage' event with the new message information.
+
 document.addEventListener("DOMContentLoaded", () => {
-  const socket = io();
-  const loginForm = document.getElementById("loginForm");
-  const chat = document.getElementById("chat");
-  const messages = document.getElementById("messages");
-  const form = document.getElementById("form");
-  const input = document.getElementById("input");
-  const usernameInput = document.getElementById("usernameInput");
+  const socket = io.connect();
+  const messageList = document.getElementById("messageList");
+  const usersList = document.getElementById("users");
+  const messageInput = document.getElementById("messageInput");
 
-  let username = "";
+  socket.on("userList", (users) => {
+    usersList.innerHTML = "";
+    users.forEach((user) => {
+      const userElement = document.createElement("li");
+      userElement.innerText = user;
+      usersList.appendChild(userElement);
+    });
+  });
 
-  loginForm.onsubmit = function (e) {
-    e.preventDefault();
-    username = usernameInput.value;
-    if (username) {
-      chat.style.display = "block"; // Show chat window
-      loginForm.style.display = "none"; // Hide login
-      socket.emit("add user", username);
+  socket.on("newMessage", (message) => {
+    const messageElement = document.createElement("div");
+    messageElement.classList.add("message-item");
+    messageElement.innerText = `${message.sender}: ${message.content}`;
+    messageList.appendChild(messageElement);
+    messageList.scrollTop = messageList.scrollHeight; // Scroll to the bottom
+  });
+
+  document.querySelector(".send-button").addEventListener("click", () => {
+    const message = messageInput.value.trim();
+    if (message) {
+      socket.emit("sendMessage", message);
+      messageInput.value = "";
     }
-  };
+  });
 
-  form.onsubmit = function (e) {
-    e.preventDefault();
-    if (input.value) {
-      socket.emit("sendMessage", { message: input.value, username: username });
-      input.value = "";
+  // Add event listener for message input on Enter key press
+  messageInput.addEventListener("keypress", (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      document.querySelector(".send-button").click();
     }
-  };
-
-  socket.on("message", (data) => {
-    const item = document.createElement("li");
-    item.classList.add(data.username === username ? "msg-from-me" : "msg-from-others");
-    item.innerHTML = `<strong>${data.username}</strong>: ${data.message}`;
-    messages.appendChild(item);
-    window.scrollTo(0, document.body.scrollHeight);
   });
 });

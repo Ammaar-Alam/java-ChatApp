@@ -37,8 +37,28 @@ io.on("connection", (socket) => {
       username: socket.username || "Anonymous",
       message: data.message,
     });
+
+    socket.on("user joined", (data) => {
+      // Update user list
+      updateUserList(data.users);
+    });
+
+    socket.on("user left", (data) => {
+      // Update user list
+      updateUserList(data.users);
+    });
+
+    function updateUserList(users) {
+      const userListElement = document.getElementById("userList");
+      userListElement.innerHTML = ""; // Clear current list
+      users.forEach((user) => {
+        const userElement = document.createElement("li");
+        userElement.textContent = user;
+        userListElement.appendChild(userElement);
+      });
+    }
   });
 });
 
-const PORT = process.env.PORT || 54321;
+const PORT = process.env.PORT || 3120;
 server.listen(PORT, () => console.log(`Server running on port ${PORT}`));
