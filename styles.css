@@ -56,3 +56,34 @@ html {
     padding: 10px;
     cursor: pointer;
 }
+
+#loginForm {
+    margin-bottom: 1em;
+    text-align: center;
+}
+
+#usernameInput {
+    margin-right: 0.5em;
+    padding: 0.5em;
+}
+
+#chat {
+    display: none; /* hide until a username is entered */
+}
+
+/* message list styling */
+#messages li {
+    padding: 5px 10px;
+    margin-bottom: 0.2em;
+    border-radius: 5px;
+    background: #f9f9f9;
+}
+
+/* style different message types */
+.msg-from-me {
+    background: #dcf8c6;
+}
+
+.msg-from-others {
+    background: #fff;
+}

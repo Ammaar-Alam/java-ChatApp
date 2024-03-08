@@ -1,20 +1,36 @@
 document.addEventListener("DOMContentLoaded", () => {
   const socket = io();
-  const input = document.getElementById("input");
-  const form = document.getElementById("form");
+  const loginForm = document.getElementById("loginForm");
+  const chat = document.getElementById("chat");
   const messages = document.getElementById("messages");
+  const form = document.getElementById("form");
+  const input = document.getElementById("input");
+  const usernameInput = document.getElementById("usernameInput");
 
-  form.addEventListener("submit", (e) => {
+  let username = "";
+
+  loginForm.onsubmit = function (e) {
+    e.preventDefault();
+    username = usernameInput.value;
+    if (username) {
+      chat.style.display = "block"; // Show chat window
+      loginForm.style.display = "none"; // Hide login
+      socket.emit("add user", username);
+    }
+  };
+
+  form.onsubmit = function (e) {
     e.preventDefault();
     if (input.value) {
-      socket.emit("sendMessage", input.value);
+      socket.emit("sendMessage", { message: input.value, username: username });
       input.value = "";
     }
-  });
+  };
 
-  socket.on("message", (message) => {
+  socket.on("message", (data) => {
     const item = document.createElement("li");
-    item.textContent = message;
+    item.classList.add(data.username === username ? "msg-from-me" : "msg-from-others");
+    item.innerHTML = `<strong>${data.username}</strong>: ${data.message}`;
     messages.appendChild(item);
     window.scrollTo(0, document.body.scrollHeight);
   });
