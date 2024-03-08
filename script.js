@@ -1,40 +1,21 @@
-const messageList = document.getElementById("messageList");
-const usersList = document.getElementById("users");
-const messageForm = document.getElementById("messageForm");
-const messageInput = document.getElementById("messageInput");
+document.addEventListener("DOMContentLoaded", () => {
+  const socket = io();
+  const input = document.getElementById("input");
+  const form = document.getElementById("form");
+  const messages = document.getElementById("messages");
 
-const socket = new WebSocket("ws://localhost:12345");
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
+    if (input.value) {
+      socket.emit("sendMessage", input.value);
+      input.value = "";
+    }
+  });
 
-socket.onopen = function (e) {
-  console.log("Connection established");
-};
-
-socket.onmessage = function (event) {
-  const message = JSON.parse(event.data);
-
-  if (message.type === "message") {
-    const msgElement = document.createElement("li");
-    msgElement.textContent = `${message.author}: ${message.content}`;
-    messageList.appendChild(msgElement);
-  } else if (message.type === "userList") {
-    usersList.innerHTML = "";
-    message.users.forEach((user) => {
-      const userElement = document.createElement("li");
-      userElement.textContent = user;
-      usersList.appendChild(userElement);
-    });
-  }
-};
-
-socket.onerror = function (error) {
-  console.error(`WebSocket error: ${error.message}`);
-};
-
-messageForm.onsubmit = function (e) {
-  e.preventDefault();
-  const message = messageInput.value;
-  socket.send(JSON.stringify({ content: message }));
-  messageInput.value = "";
-};
-
-// add all additional JS logic for handling user events, reconnections, disconnections, etc.
+  socket.on("message", (message) => {
+    const item = document.createElement("li");
+    item.textContent = message;
+    messages.appendChild(item);
+    window.scrollTo(0, document.body.scrollHeight);
+  });
+});

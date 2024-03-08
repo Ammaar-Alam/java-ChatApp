@@ -2,27 +2,17 @@
 <html lang="en">
     <head>
         <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Web Chat Application</title>
+        <title>Chat Application</title>
         <link rel="stylesheet" href="styles.css" />
+        <script src="/socket.io/socket.io.js"></script>
+        <script defer src="script.js"></script>
     </head>
     <body>
-        <div class="chat-container">
-            <div class="user-list">
-                <ul id="users"></ul>
-            </div>
-            <div class="chat-window">
-                <div class="chat-header">Chat Room</div>
-                <div class="messages" id="messageList"></div>
-                <form id="messageForm">
-                    <input
-                        type="text"
-                        id="messageInput"
-                        placeholder="Type a message..."
-                    />
-                    <button type="submit">Send</button>
-                </form>
-            </div>
+        <div id="chat">
+            <ul id="messages"></ul>
+            <form id="form" action="">
+                <input id="input" autocomplete="off" /><button>Send</button>
+            </form>
         </div>
     </body>
 </html>
