@@ -17,6 +17,14 @@ io.on("connection", (socket) => {
   socket.on("disconnect", () => {
     if (addedUser) {
       io.emit("user left", socket.username);
+
+      // Send a 'user left' chat message
+      io.emit("message", {
+        username: "",
+        message: `${socket.username} has left the chat`,
+        systemMessage: true,
+      });
+
       console.log(`${socket.username} disconnected`);
     }
   });
@@ -25,7 +33,16 @@ io.on("connection", (socket) => {
     if (addedUser) return;
     socket.username = username;
     addedUser = true;
+
+    // Announce to other users that someone has joined
     io.emit("user joined", { username: socket.username });
+
+    // Send a 'user joined' chat message
+    io.emit("message", {
+      username: "", // Leave username empty for system messages
+      message: `${username} joined the chat`,
+      systemMessage: true, // Add an indicator that this is a system message
+    });
   });
 
   socket.on("sendMessage", (data) => {

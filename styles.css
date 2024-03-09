@@ -111,3 +111,12 @@ html {
 .username-form button {
     margin-left: 20px;
 }
+
+.system-message {
+    font-style: italic;
+    color: grey;
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+    font-size: 11px;
+}

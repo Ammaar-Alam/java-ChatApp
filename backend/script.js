@@ -39,8 +39,25 @@ document.addEventListener("DOMContentLoaded", () => {
 
   socket.on("message", (data) => {
     const item = document.createElement("li");
-    item.classList.add(data.username === username ? "msg-from-me" : "msg-from-others");
-    item.textContent = `${data.username}: ${data.message}`;
+
+    // If it's a system message, apply the special class
+    if (data.systemMessage) {
+      item.classList.add("system-message");
+    } else {
+      // Apply other conditions based on the username
+      item.classList.add(
+        data.username === username ? "msg-from-me" : "msg-from-others",
+      );
+      item.textContent = `${data.username}: ${data.message}`;
+    }
+
+    // For system messages, use only the message without the username
+    if (data.systemMessage) {
+      item.textContent = data.message;
+    } else {
+      item.textContent = `${data.username}: ${data.message}`;
+    }
+
     messages.appendChild(item);
     messages.scrollTop = messages.scrollHeight;
   });
