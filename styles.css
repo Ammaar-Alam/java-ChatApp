@@ -103,3 +103,11 @@ html {
     align-self: center;
     align-items: center;
 }
+
+.username-form input {
+    margin-left: 30px;
+}
+
+.username-form button {
+    margin-left: 20px;
+}
