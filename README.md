@@ -18,7 +18,7 @@ To run this chat application locally, follow these steps:
 1. Clone the repository: `git clone https://github.com/Ammaar-Alam/java-ChatApp`
 2. Navigate to the project directory: `cd backend`
 3. Install the dependencies: `npm install socket.io express`
-4. Start the server: `npm start'
+4. Start the server: `npm start`
 
 The application will be running on [http://localhost:1170](http://localhost:1170).
 
