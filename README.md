@@ -8,8 +8,8 @@ This project is a real-time chat application built with Node.js, Express, and So
 - User can enter a username to join the chat
 - Displays all users currently in the chat room
 - Responsive design for both desktop and mobile devices
-![Chat GUI]([https://github.com/Ammaar-Alam/java-ChatApp/blob/main/WebChatGUI.png?raw=true)
-
+  
+![Chat GUI](https://github.com/Ammaar-Alam/java-ChatApp/blob/main/WebChatGUI.png?raw=true)
 
 ## Installation
 
