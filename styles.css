@@ -10,6 +10,7 @@ html {
 }
 
 .chat-container {
+    position: absolute;
     display: grid;
     grid-template-columns: 1fr 3fr;
     width: 80%;
@@ -48,6 +49,9 @@ html {
 .chat-box {
     display: flex;
     flex-direction: column;
+    overflow-y: auto;
+    overflow-x: auto;
+    width: 630px;
 }
 
 .chat-header {
@@ -59,7 +63,7 @@ html {
 }
 
 .messages {
-    flex-grow: 1;
+    flex-grow: 3;
     overflow-y: auto;
     padding: 20px;
     background-color: #f7f7f7;
@@ -95,4 +99,7 @@ html {
     padding: 20px;
     box-shadow: 10px 10px 10px rgba(0, 0, 0, 0.3);
     border-radius: 15px;
+    top: 190px;
+    align-self: center;
+    align-items: center;
 }
