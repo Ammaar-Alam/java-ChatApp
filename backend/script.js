@@ -7,9 +7,34 @@ document.addEventListener("DOMContentLoaded", () => {
   const input = document.getElementById("input");
   const usernameInput = document.getElementById("usernameInput");
   const joinButton = loginForm.querySelector('button[type="submit"]');
+  const userColors = new Map();
 
   let username = "";
 
+  function getRandomColor() {
+    const letters = "0123456789ABCDEF";
+    let color = "#";
+    for (let i = 0; i < 6; i++) {
+      color += letters[Math.floor(Math.random() * 16)];
+    }
+    return color;
+  }
+
+  function getUsernameColor(username) {
+    if (!userColors.has(username)) {
+      userColors.set(username, getRandomColor());
+    }
+    return userColors.get(username);
+  }
+
+  function createUsernameSpan(username) {
+    const usernameSpan = document.createElement("span");
+    usernameSpan.classList.add("username-highlight");
+    usernameSpan.textContent = username;
+    // Set the color style to be the user's random color
+    usernameSpan.style.color = getUsernameColor(username);
+    return usernameSpan;
+  }
   // Listen for Enter key press to submit the username
   usernameInput.addEventListener("keypress", function (e) {
     if (e.key === "Enter") {
@@ -40,22 +65,19 @@ document.addEventListener("DOMContentLoaded", () => {
   socket.on("message", (data) => {
     const item = document.createElement("li");
 
-    // If it's a system message, apply the special class
     if (data.systemMessage) {
       item.classList.add("system-message");
+      item.textContent = data.message;
     } else {
-      // Apply other conditions based on the username
+      const usernameSpan = createUsernameSpan(data.username);
+      usernameSpan.classList.add("username-highlight");
+      usernameSpan.textContent = data.username;
+
       item.classList.add(
         data.username === username ? "msg-from-me" : "msg-from-others",
       );
-      item.textContent = `${data.username}: ${data.message}`;
-    }
-
-    // For system messages, use only the message without the username
-    if (data.systemMessage) {
-      item.textContent = data.message;
-    } else {
-      item.textContent = `${data.username}: ${data.message}`;
+      item.appendChild(usernameSpan);
+      item.append(` : ${data.message}`);
     }
 
     messages.appendChild(item);
@@ -69,7 +91,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (!existingUsers.includes(data.username)) {
       const userItem = document.createElement("li");
-      userItem.textContent = data.username;
+      const usernameSpan = createUsernameSpan(data.username);
+      userItem.appendChild(usernameSpan);
       document.getElementById("users").appendChild(userItem);
     }
   });
