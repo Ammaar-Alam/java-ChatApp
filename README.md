@@ -4,7 +4,7 @@ This project is a real-time chat application built with Node.js, Express, and So
 
 ## Live Demo
 
-Experience the live chat without any setup. Join the conversation now at [Java WebChat on Heroku](https://java-webchat-4f4062c7f659.herokuapp.com/).
+Experience the live chat without any setup. Join the conversation now on [my website](webchat.ammaar.xyz).
 
 ## Features
 
