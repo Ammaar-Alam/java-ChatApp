@@ -22,16 +22,14 @@ document.addEventListener("DOMContentLoaded", () => {
     return color;
   }
 
-  function getUsernameColor(username) {
-    if (!userColors.has(username)) {
-      userColors.set(username, getRandomColor());
-    }
-    return userColors.get(username);
-  }
-
   function createUsernameSpan(username) {
     if (!userColors.has(username)) {
-      userColors.set(username, getRandomColor());
+      const letters = "0123456789ABCDEF";
+      let color = "#";
+      for (let i = 0; i < 6; i++) {
+        color += letters[Math.floor(Math.random() * 16)];
+      }
+      userColors.set(username, color);
     }
     const usernameSpan = document.createElement("span");
     usernameSpan.textContent = username;

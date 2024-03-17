@@ -59,8 +59,6 @@ io.on("connection", (socket) => {
 
     // After adding user to the room, emit the user list for that room
     const usersInRoom = Object.values(rooms[room].users);
-    io.in(room).emit("update user list", usersInRoom);
-
     io.in(room).emit("update user list", Object.values(rooms[room].users));
     io.emit("update room list", Object.keys(rooms)); // Update all clients with the new room list
 
