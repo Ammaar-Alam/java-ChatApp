@@ -12,6 +12,10 @@ app.use(express.static(path.join(__dirname)));
 let rooms = {}; // Stores room details including users and passwords
 
 io.on("connection", (socket) => {
+  socket.emit("update room list", Object.keys(rooms));
+  // Emit the current list of all users across rooms upon new client connection
+  const allUsers = Object.values(rooms).flatMap((room) => Object.values(room.users));
+  socket.emit("update user list", allUsers);
   console.log("New client connected");
   let addedUser = false;
   let currentRoom = "";
@@ -52,6 +56,10 @@ io.on("connection", (socket) => {
 
     rooms[room].users[socket.id] = username;
     socket.join(room);
+
+    // After adding user to the room, emit the user list for that room
+    const usersInRoom = Object.values(rooms[room].users);
+    io.in(room).emit("update user list", usersInRoom);
 
     io.in(room).emit("update user list", Object.values(rooms[room].users));
     io.emit("update room list", Object.keys(rooms)); // Update all clients with the new room list

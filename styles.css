@@ -7,16 +7,17 @@ html {
     display: flex;
     justify-content: center;
     align-items: center;
+    overflow: hidden;
 }
 
 .chat-container {
     display: grid;
     grid-template-columns: 1fr 3fr 1fr; /* Adjusted to include room list on the right */
-    width: 80%;
-    max-width: 1200px; /* Increased max-width to accommodate room list */
+    width: 100%;
+    max-width: auto; /* Increased max-width to accommodate room list */
     height: 500px;
     background: #fff;
-    border-radius: 10px;
+    border-radius: 20px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     overflow: hidden;
     position: relative; /* Ensure this is set for absolute positioning within */
@@ -71,26 +72,6 @@ html {
     text-align: center;
 }
 
-.user-list li,
-.room-list li {
-    padding: 10px 0;
-    border-bottom: 1px solid #474747;
-    text-align: center;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-.user-list li:hover,
-.room-list li:hover {
-    background-color: #555; /* Slightly darker on hover */
-}
-
-/* Highlight the current room */
-.room-list li.current-room {
-    text-decoration: underline;
-    font-weight: bold;
-}
-
 .chat-box {
     display: flex;
     flex-direction: column;
@@ -110,15 +91,17 @@ html {
 .messages {
     flex-grow: 3;
     overflow-y: auto;
-    padding: 20px;
+    padding: 25px;
     background-color: #f7f7f7;
     font-size: 18px;
+    max-width: auto;
 }
 
 .input-area {
     padding: 20px;
     display: flex;
     border-top: 1px solid #ccc;
+    max-width: auto;
 }
 
 .input-area input {

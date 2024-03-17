@@ -88,22 +88,22 @@ document.addEventListener("DOMContentLoaded", () => {
   socket.on("update user list", (usernames) => {
     const usersList = document.getElementById("users");
     usersList.innerHTML = ""; // Clear the user list
-    usernames.forEach((username) => {
-      const li = document.createElement("li");
-      const usernameSpan = createUsernameSpan(username); // Reuse this for colorful names
-      li.appendChild(usernameSpan);
-      usersList.appendChild(li);
+    usernames.forEach((user) => {
+      const userItem = document.createElement("li");
+      const usernameSpan = createUsernameSpan(user); // Reuse this for colorful names
+      userItem.appendChild(usernameSpan);
+      usersList.appendChild(userItem);
     });
   });
 
   socket.on("update room list", (rooms) => {
     const roomsList = document.getElementById("rooms");
-    roomsList.innerHTML = ""; // Clear current list
+    roomsList.innerHTML = ""; // Clear the current list
     rooms.forEach((roomName) => {
       const roomItem = document.createElement("li");
       roomItem.textContent = roomName;
       if (roomName === currentRoom) {
-        roomItem.style.textDecoration = "underline"; // Highlight the current room
+        roomItem.classList.add("current-room"); // Using a class for styling the current room
       }
       roomsList.appendChild(roomItem);
     });
