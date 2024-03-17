@@ -1,6 +1,6 @@
 # Chat Application
 
-An engaging real-time chat application using Node.js, Express, and Socket.IO, enabling users to interact in a shared space with instant message delivery.
+This project is a real-time chat application built with Node.js, Express, and Socket.IO. It allows users to join a chat room, send messages, and see other users in the room.
 
 ## Live Demo
 
@@ -8,12 +8,14 @@ Experience the live chat without any setup. Join the conversation now at [Java W
 
 ## Features
 
-- Instantaneous real-time messaging
-- Unique username entry for chat participation
-- View all active participants
-- Adaptive design for desktop and mobile access
+- Real-time messaging
+- User can enter a username to join the chat
+- Displays all users currently in the chat room
+- Responsive design for both desktop and mobile devices
 
-## Local Installation (Optional)
+![Chat GUI](https://github.com/Ammaar-Alam/java-ChatApp/blob/main/WebChatGUI.png?raw=true)
+
+## Installation
 
 Prefer to run it locally? Here's how:
 
@@ -23,20 +25,22 @@ Prefer to run it locally? Here's how:
 4. Launch the server: `npm start`
    - Access at [localhost:1170](http://localhost:1170)
 
+The application will be running on [http://localhost:1170](http://localhost:1170).
+
 ## Usage
 
-Visit the [live chat](https://java-webchat-4f4062c7f659.herokuapp.com/) or local version, enter a username, and start messaging.
+After starting the server, open a web browser and go to [http://localhost:1170](http://localhost:1170). Enter a username to join the chat room. You can then start sending messages and see other users in the room.
 
-## Contributions
+## Contributing
 
-Enhance the chat by:
+Contributions to improve the chat application are welcome. Please follow these steps to contribute:
 
-1. Forking the repo.
-2. Creating a feature branch: `git checkout -b new-feature`.
-3. Committing changes: `git commit -am 'Add feature'`.
-4. Pushing to the branch: `git push origin new-feature`.
-5. Opening a pull request.
+1. Fork the repository.
+2. Create a new branch: `git checkout -b feature-branch-name`.
+3. Make changes and commit them: `git commit -am 'Add some feature'`.
+4. Push to the branch: `git push origin feature-branch-name`.
+5. Create a new Pull Request.
 
 ## License
 
-Distributed under the MIT License. See `LICENSE` for more information.
+This project is licensed under the MIT License - see the [LICENSE.md](LICENSE) file for details.
