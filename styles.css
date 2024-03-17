@@ -48,6 +48,10 @@ html {
     text-align: center;
 }
 
+.room-list li.current-room {
+    text-decoration: underline;
+}
+
 .user-list {
     background-color: #333;
     color: #fff;
