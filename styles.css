@@ -4,23 +4,47 @@ html {
     margin: 0;
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     background: #ededed;
-    /* Light gray background */
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
 .chat-container {
-    position: absolute;
     display: grid;
-    grid-template-columns: 1fr 3fr;
+    grid-template-columns: 1fr 3fr 1fr; /* Adjusted to include room list on the right */
     width: 80%;
-    max-width: 900px;
+    max-width: 1200px; /* Increased max-width to accommodate room list */
     height: 500px;
     background: #fff;
     border-radius: 10px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     overflow: hidden;
+    position: relative; /* Ensure this is set for absolute positioning within */
+}
+
+/* Add styles for room list, similar to user-list */
+.room-list {
+    background-color: #333;
+    color: #fff;
+    padding: 10px;
+    overflow-y: auto;
+    overflow-x: auto;
+    width: 250px;
+}
+
+.room-list h3 {
+    text-align: center;
+}
+
+.room-list ul {
+    list-style: none;
+    padding: 0;
+}
+
+.room-list li {
+    padding: 10px 0;
+    border-bottom: 1px solid #474747;
+    text-align: center;
 }
 
 .user-list {
@@ -45,6 +69,26 @@ html {
     padding: 10px 0;
     border-bottom: 1px solid #474747;
     text-align: center;
+}
+
+.user-list li,
+.room-list li {
+    padding: 10px 0;
+    border-bottom: 1px solid #474747;
+    text-align: center;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.user-list li:hover,
+.room-list li:hover {
+    background-color: #555; /* Slightly darker on hover */
+}
+
+/* Highlight the current room */
+.room-list li.current-room {
+    text-decoration: underline;
+    font-weight: bold;
 }
 
 .chat-box {
@@ -95,40 +139,53 @@ html {
 }
 
 .username-form {
-    position: absolute;
-    width: 300px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px; /* Provides consistent spacing between form elements */
     background: whitesmoke;
     padding: 20px;
     box-shadow: 10px 10px 10px rgba(0, 0, 0, 0.3);
     border-radius: 15px;
-    top: 190px;
-    align-self: center;
-    align-items: center;
+    width: 300px; /* Adjust width as needed */
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
 }
 
-.username-form input {
-    margin-left: 30px;
+.username-form input,
+.username-form button {
+    display: block;
+    width: 80%; /* Make inputs and button take up most of the form width */
+    margin: 10px auto; /* Center align and add some vertical spacing */
+    padding: 10px; /* Make inputs taller for better clickability */
+}
+
+.username-form input[type="text"],
+.username-form input[type="password"] {
+    border: 1px solid #ccc;
+    border-radius: 4px;
 }
 
 .username-form button {
-    margin-left: 20px;
+    background-color: #007bff;
+    border: none;
+    border-radius: 4px;
+    color: white;
+    cursor: pointer;
 }
 
-.system-message {
+.system-message,
+.username-highlight {
     font-style: italic;
     color: grey;
-    text-align: center;
-    margin-left: auto;
-    margin-right: auto;
-    font-size: 11px;
 }
 
 .username-highlight {
     font-weight: bold;
-    color: inherit; /* Use the color defined in the style attribute */
     text-shadow:
         -1px -1px 0 #000,
         1px -1px 0 #000,
         -1px 1px 0 #000,
-        1px 1px 0 #000; /* This creates an outline effect */
+        1px 1px 0 #000;
 }
