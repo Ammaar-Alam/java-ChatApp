@@ -21,7 +21,7 @@ Prefer to run it locally? Here's how:
 
 1. Clone the repository: `git clone https://github.com/Ammaar-Alam/java-ChatApp`
 2. Enter the project: `cd java-Chatapp`
-3. Install dependencies: `npm install`
+3. Install dependencies: `npm install socket.io express`
 4. Launch the server: `npm start`
    - Access at [localhost:1170](http://localhost:1170)
 
