@@ -1,36 +1,48 @@
-body,
 html {
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
     height: 100%;
-    margin: 0;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    background: #ededed;
+    text-align: -webkit-center;
+}
+
+body {
+    height: 100%;
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     background: #ededed;
     display: flex;
     justify-content: center;
     align-items: center;
     overflow: hidden;
+    width: 75%;
 }
 
 .chat-container {
     display: grid;
-    grid-template-columns: 1fr 3fr 1fr; /* Adjusted to include room list on the right */
+    grid-template-columns: 1fr 3fr 1fr;
+    /* Adjusted to include room list on the right */
     width: 100%;
-    max-width: auto; /* Increased max-width to accommodate room list */
+    max-width: auto;
+    /* Increased max-width to accommodate room list */
     height: 500px;
     background: #fff;
     border-radius: 20px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     overflow: hidden;
-    position: relative; /* Ensure this is set for absolute positioning within */
+    position: relative;
+    /* Ensure this is set for absolute positioning within */
 }
 
 /* Add styles for room list, similar to user-list */
 .room-list {
     background-color: #333;
     color: #fff;
-    padding: 10px;
     overflow-y: auto;
     overflow-x: auto;
-    width: 250px;
+    width: 30%;
 }
 
 .room-list h3 {
@@ -55,10 +67,9 @@ html {
 .user-list {
     background-color: #333;
     color: #fff;
-    padding: 10px;
     overflow-y: auto;
     overflow-x: auto;
-    width: 250px;
+    width: 40%;
 }
 
 .user-list h3 {
@@ -81,7 +92,8 @@ html {
     flex-direction: column;
     overflow-y: auto;
     overflow-x: auto;
-    width: 630px;
+    width: -webkit-fill-available;
+    text-align: justify;
 }
 
 .chat-header {
@@ -96,7 +108,7 @@ html {
     flex-grow: 3;
     overflow-y: auto;
     padding: 25px;
-    background-color: #f7f7f7;
+    background-color: white;
     font-size: 18px;
     max-width: auto;
 }
@@ -128,12 +140,14 @@ html {
 .username-form {
     display: flex;
     flex-direction: column;
-    gap: 10px; /* Provides consistent spacing between form elements */
+    gap: 10px;
+    /* Provides consistent spacing between form elements */
     background: whitesmoke;
     padding: 20px;
     box-shadow: 10px 10px 10px rgba(0, 0, 0, 0.3);
     border-radius: 15px;
-    width: 300px; /* Adjust width as needed */
+    width: 300px;
+    /* Adjust width as needed */
     position: absolute;
     top: 50%;
     left: 50%;
@@ -143,9 +157,12 @@ html {
 .username-form input,
 .username-form button {
     display: block;
-    width: 80%; /* Make inputs and button take up most of the form width */
-    margin: 10px auto; /* Center align and add some vertical spacing */
-    padding: 10px; /* Make inputs taller for better clickability */
+    width: 80%;
+    /* Make inputs and button take up most of the form width */
+    margin: 10px auto;
+    /* Center align and add some vertical spacing */
+    padding: 10px;
+    /* Make inputs taller for better clickability */
 }
 
 .username-form input[type="text"],
