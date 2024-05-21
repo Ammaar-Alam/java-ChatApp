@@ -31,11 +31,11 @@ document.addEventListener("DOMContentLoaded", () => {
     const usernameSpan = document.createElement("span");
     usernameSpan.classList.add("username-highlight");
     usernameSpan.textContent = username;
-    // Set the color style to be the user's random color
+    // set the color style to be the user's random color
     usernameSpan.style.color = getUsernameColor(username);
     return usernameSpan;
   }
-  // Listen for Enter key press to submit the username
+  // listen for Enter key press to submit the username
   usernameInput.addEventListener("keypress", function (e) {
     if (e.key === "Enter") {
       e.preventDefault();
@@ -48,9 +48,9 @@ document.addEventListener("DOMContentLoaded", () => {
     username = usernameInput.value.trim();
     if (username) {
       socket.emit("add user", username);
-      chatContainer.style.display = "flex"; // Show chat window
-      loginForm.style.display = "none"; // Hide login
-      input.focus(); // Focus the message input
+      chatContainer.style.display = "flex"; // show chat window
+      loginForm.style.display = "none"; // hide login
+      input.focus(); // focus the message input
     }
   };
 
