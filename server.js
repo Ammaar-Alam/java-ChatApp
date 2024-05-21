@@ -7,7 +7,7 @@ const app = express();
 const server = http.createServer(app);
 const io = socketIo(server);
 
-// Serve static files from the directory where index.html is located
+// serve static files from the directory where index.html is located
 app.use(express.static(path.join(__dirname)));
 
 io.on("connection", (socket) => {
@@ -18,7 +18,7 @@ io.on("connection", (socket) => {
     if (addedUser) {
       io.emit("user left", socket.username);
 
-      // Send a 'user left' chat message
+      // snd a 'user left' chat message
       io.emit("message", {
         username: "",
         message: `${socket.username} has left the chat`,
@@ -34,22 +34,22 @@ io.on("connection", (socket) => {
     socket.username = username;
     addedUser = true;
 
-    // Announce to other users that someone has joined
+    // announce to other users that someone has joined
     io.emit("user joined", { username: socket.username });
 
-    // Send a 'user joined' chat message
+    // send a 'user joined' chat message
     io.emit("message", {
-      username: "", // Leave username empty for system messages
+      username: "", // leave username empty for system messages
       message: `${username} joined the chat`,
-      systemMessage: true, // Add an indicator that this is a system message
+      systemMessage: true, // add an indicator that this is a system message
     });
   });
 
   socket.on("sendMessage", (data) => {
     if (!addedUser) {
-      // Assume the username is available but the user hasn't been flagged as added.
-      addedUser = true; // Mark the user as added.
-      // Check if the username is set; if not, default to "Anonymous"
+      // assume the username is available but the user hasn't been flagged as added.
+      addedUser = true; // mark the user as added.
+      // check if the username is set; if not, default to "Anonymous"
       socket.username = socket.username || "Anonymous";
       io.emit("user joined", { username: socket.username });
     }
