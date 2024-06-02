@@ -17,6 +17,7 @@ io.on("connection", (socket) => {
   const allUsers = Object.values(rooms).flatMap((room) => Object.values(room.users));
   socket.emit("update user list", allUsers);
   console.log("New client connected");
+
   let addedUser = false;
   let currentRoom = "";
 
@@ -34,7 +35,6 @@ io.on("connection", (socket) => {
           message: `${socket.username} left the chat`,
         });
       }
-
       console.log(`${socket.username} disconnected from ${currentRoom}`);
     }
   });
@@ -48,6 +48,7 @@ io.on("connection", (socket) => {
 
     if (!rooms[room]) {
       rooms[room] = { password: password || null, users: {} };
+      console.log(`Room created: ${room} with password: ${password || "none"}`);
     } else if (rooms[room].password !== password) {
       socket.emit("password incorrect");
       return;
@@ -66,6 +67,8 @@ io.on("connection", (socket) => {
       systemMessage: true,
       message: `${socket.username} joined the chat`,
     });
+
+    console.log(`${socket.username} joined room: ${room}`);
   });
 
   socket.on("sendMessage", (data) => {
@@ -74,6 +77,9 @@ io.on("connection", (socket) => {
       username: socket.username,
       message: data.message,
     });
+    console.log(
+      `Message from ${socket.username} in room ${currentRoom}: ${data.message}`,
+    );
   });
 });
 
