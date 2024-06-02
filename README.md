@@ -9,9 +9,10 @@ Experience the live chat without any setup. Join the conversation now on [my web
 ## Features
 
 - Real-time messaging
-- User can enter a username to join the chat
+- Users can enter a username to join the chat
 - Displays all users currently in the chat room
 - Responsive design for both desktop and mobile devices
+- Users can create public chatrooms or create private chatrooms that are password protected
 
 ![Chat GUI](https://github.com/Ammaar-Alam/java-ChatApp/blob/main/WebChatGUI.png?raw=true)
 
