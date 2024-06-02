@@ -24,12 +24,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function createUsernameSpan(username) {
     if (!userColors.has(username)) {
-      const letters = "0123456789ABCDEF";
-      let color = "#";
-      for (let i = 0; i < 6; i++) {
-        color += letters[Math.floor(Math.random() * 16)];
-      }
-      userColors.set(username, color);
+      userColors.set(username, getRandomColor());
     }
     const usernameSpan = document.createElement("span");
     usernameSpan.textContent = username;
@@ -51,8 +46,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const password = passwordInput.value;
     if (username && room) {
       socket.emit("add user", { username, room, password });
-      currentRoom = room; // Keep track of the current room
-      chatContainer.style.display = "flex";
+      currentRoom = room;
+      chatContainer.style.display = "grid";
       loginForm.style.display = "none";
       input.focus();
     }
@@ -85,10 +80,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
   socket.on("update user list", (usernames) => {
     const usersList = document.getElementById("users");
-    usersList.innerHTML = ""; // Clear the user list
+    usersList.innerHTML = "";
     usernames.forEach((user) => {
       const userItem = document.createElement("li");
-      const usernameSpan = createUsernameSpan(user); // Reuse this for colorful names
+      const usernameSpan = createUsernameSpan(user);
       userItem.appendChild(usernameSpan);
       usersList.appendChild(userItem);
     });
@@ -96,12 +91,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
   socket.on("update room list", (rooms) => {
     const roomsList = document.getElementById("rooms");
-    roomsList.innerHTML = ""; // Clear the current list
+    roomsList.innerHTML = "";
     rooms.forEach((roomName) => {
       const roomItem = document.createElement("li");
       roomItem.textContent = roomName;
       if (roomName === currentRoom) {
-        roomItem.classList.add("current-room"); // Using a class for styling the current room
+        roomItem.classList.add("current-room");
       }
       roomsList.appendChild(roomItem);
     });
@@ -112,6 +107,6 @@ document.addEventListener("DOMContentLoaded", () => {
     roomInput.value = "";
     passwordInput.value = "";
     chatContainer.style.display = "none";
-    loginForm.style.display = "block";
+    loginForm.style.display = "flex";
   });
 });
