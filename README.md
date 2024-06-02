@@ -57,3 +57,4 @@ This branch is used for implementing and testing new features before pulling to 
    - ~~Fix chat-room div spacing and highlight~~
    - ~~Fix bug after user enters incorrect password (can no longer join rooms even if correct password is inputted)~~
    - Add updated console logs (showing when a room is created in console and displaying its password; showing when a user leaves and joins a room)
+   - Add ability for users to change their rooms as they please by clicking on any rooms in the available list on the right column
