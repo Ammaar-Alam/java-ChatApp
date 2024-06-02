@@ -13,7 +13,7 @@ document.addEventListener("DOMContentLoaded", () => {
   let currentRoom = "";
   let username = "";
 
-  // init socket connection
+  // initialize socket connection
   function initSocket() {
     if (socket) {
       socket.disconnect(); // disconnect existing socket if any
@@ -23,7 +23,8 @@ document.addEventListener("DOMContentLoaded", () => {
     socket.on("message", (data) => {
       const item = document.createElement("li");
       if (data.systemMessage) {
-        // systems message handling remains unchanged
+        item.textContent = data.message;
+        item.classList.add("system-message");
       } else {
         const usernameSpan = createUsernameSpan(data.username);
         item.appendChild(usernameSpan);
@@ -94,7 +95,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // reset chat state and reinitialize socket connection
   function resetChatState() {
-    messages.innerHTML = ""; // ckear messages
+    messages.innerHTML = ""; // clear messages
     const usersList = document.getElementById("users");
     usersList.innerHTML = ""; // clear user list
     chatContainer.style.display = "none"; // hide chat container
@@ -112,7 +113,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // handle Handle login form submission
+  // handle login form submission
   loginForm.onsubmit = function (e) {
     e.preventDefault();
     username = usernameInput.value.trim();

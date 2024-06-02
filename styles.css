@@ -136,10 +136,11 @@ body {
     cursor: pointer;
 }
 
-.system-message,
-.username-highlight {
+.system-message {
     font-style: italic;
     color: grey;
+    text-align: center;
+    list-style-type: none; /* server announcements shouldn't be bulleted */
 }
 
 .username-highlight {
