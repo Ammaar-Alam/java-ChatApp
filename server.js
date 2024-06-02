@@ -40,8 +40,8 @@ io.on("connection", (socket) => {
   });
 
   socket.on("add user", ({ username, room, password }) => {
-    if (addedUser && currentRoom) {
-      // Leave the current room
+    if (addedUser && currentRoom && currentRoom !== room) {
+      // Leave the current room only if switching to a new room
       socket.leave(currentRoom);
       delete rooms[currentRoom].users[socket.id];
       io.in(currentRoom).emit(
