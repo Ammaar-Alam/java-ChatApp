@@ -41,28 +41,43 @@ io.on("connection", (socket) => {
 
   socket.on("add user", ({ username, room, password }) => {
     if (addedUser && currentRoom && currentRoom !== room) {
-      // Leave the current room only if switching to a new room
-      socket.leave(currentRoom);
-      delete rooms[currentRoom].users[socket.id];
-      io.in(currentRoom).emit(
-        "update user list",
-        Object.values(rooms[currentRoom].users),
-      );
-      io.in(currentRoom).emit("message", {
-        systemMessage: true,
-        message: `${socket.username} left the chat`,
-      });
-      console.log(`${socket.username} left room: ${currentRoom}`);
-    }
+      // Only attempt to join new room if password is correct
+      if (
+        !rooms[room] ||
+        (rooms[room].password && rooms[room].password === password)
+      ) {
+        // Leave the current room only if switching to a new room with correct password
+        console.log(`${socket.username} attempting to leave room: ${currentRoom}`);
+        socket.leave(currentRoom);
+        delete rooms[currentRoom].users[socket.id];
+        io.in(currentRoom).emit(
+          "update user list",
+          Object.values(rooms[currentRoom].users),
+        );
+        io.in(currentRoom).emit("message", {
+          systemMessage: true,
+          message: `${socket.username} left the chat`,
+        });
+        console.log(`${socket.username} left room: ${currentRoom}`);
 
+        // Proceed to join new room
+        joinRoom({ username, room, password });
+      } else {
+        socket.emit("password incorrect");
+        console.log(`Password incorrect for room: ${room}`);
+      }
+    } else {
+      // Joining the initial room or rejoining the same room
+      joinRoom({ username, room, password });
+    }
+  });
+
+  function joinRoom({ username, room, password }) {
     socket.username = username;
 
     if (!rooms[room]) {
       rooms[room] = { password: password || null, users: {} };
       console.log(`Room created: ${room} with password: ${password || "none"}`);
-    } else if (rooms[room].password && rooms[room].password !== password) {
-      socket.emit("password incorrect");
-      return;
     }
 
     addedUser = true;
@@ -82,7 +97,7 @@ io.on("connection", (socket) => {
     });
 
     console.log(`${socket.username} joined room: ${room}`);
-  });
+  }
 
   socket.on("sendMessage", (data) => {
     if (!addedUser || !currentRoom) return;
