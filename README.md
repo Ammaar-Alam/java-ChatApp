@@ -55,4 +55,3 @@ This branch is used for implementing and testing new features before pulling to 
    - ~~Fix CSS before user submits login form~~
    - ~~Fix chat-room div spacing and highlight~~
    - ~~Fix bug after user enters incorrect password (can no longer join rooms even if correct password is inputted)~~
-

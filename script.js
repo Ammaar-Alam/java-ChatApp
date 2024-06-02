@@ -1,16 +1,77 @@
 document.addEventListener("DOMContentLoaded", () => {
-  const socket = io();
+  let socket;
   const loginForm = document.getElementById("loginForm");
   const chatContainer = document.querySelector(".chat-container");
   const messages = document.getElementById("messages");
   const form = document.getElementById("form");
   const input = document.getElementById("input");
   const usernameInput = document.getElementById("usernameInput");
+  const roomInput = document.getElementById("roomInput");
+  const passwordInput = document.getElementById("passwordInput");
   const joinButton = loginForm.querySelector('button[type="submit"]');
   const userColors = new Map();
-
+  let currentRoom = "";
   let username = "";
 
+  // init socket connection
+  function initSocket() {
+    if (socket) {
+      socket.disconnect(); // disconnect existing socket if any
+    }
+    socket = io();
+
+    socket.on("message", (data) => {
+      const item = document.createElement("li");
+      if (data.systemMessage) {
+        // systems message handling remains unchanged
+      } else {
+        const usernameSpan = createUsernameSpan(data.username);
+        item.appendChild(usernameSpan);
+        item.append(`: ${data.message}`);
+      }
+      messages.appendChild(item);
+      messages.scrollTop = messages.scrollHeight; // scroll to latest message
+    });
+
+    socket.on("update user list", (usernames) => {
+      const usersList = document.getElementById("users");
+      usersList.innerHTML = ""; // clear existing user list
+      usernames.forEach((user) => {
+        const userItem = document.createElement("li");
+        const usernameSpan = createUsernameSpan(user);
+        userItem.appendChild(usernameSpan);
+        usersList.appendChild(userItem);
+      });
+    });
+
+    socket.on("update room list", (rooms) => {
+      const roomsList = document.getElementById("rooms");
+      roomsList.innerHTML = ""; // clear existing room list
+      rooms.forEach((roomName) => {
+        const roomItem = document.createElement("li");
+        roomItem.textContent = roomName;
+        if (roomName === currentRoom) {
+          roomItem.classList.add("current-room"); // highlight current room
+        }
+        roomsList.appendChild(roomItem);
+      });
+    });
+
+    socket.on("password incorrect", () => {
+      alert("Password incorrect. Please try again.");
+      resetChatState(); // reset state on incorrect password
+    });
+
+    socket.on("connect", () => {
+      console.log("Connected to server");
+    });
+
+    socket.on("disconnect", () => {
+      console.log("Disconnected from server");
+    });
+  }
+
+  // generate a random color for username
   function getRandomColor() {
     const letters = "0123456789ABCDEF";
     let color = "#";
@@ -20,22 +81,30 @@ document.addEventListener("DOMContentLoaded", () => {
     return color;
   }
 
-  function getUsernameColor(username) {
+  // create a span element for the username with a unique color
+  function createUsernameSpan(username) {
     if (!userColors.has(username)) {
       userColors.set(username, getRandomColor());
     }
-    return userColors.get(username);
-  }
-
-  function createUsernameSpan(username) {
     const usernameSpan = document.createElement("span");
-    usernameSpan.classList.add("username-highlight");
     usernameSpan.textContent = username;
-    // set the color style to be the user's random color
-    usernameSpan.style.color = getUsernameColor(username);
+    usernameSpan.style.color = userColors.get(username);
     return usernameSpan;
   }
-  // listen for Enter key press to submit the username
+
+  // reset chat state and reinitialize socket connection
+  function resetChatState() {
+    messages.innerHTML = ""; // ckear messages
+    const usersList = document.getElementById("users");
+    usersList.innerHTML = ""; // clear user list
+    chatContainer.style.display = "none"; // hide chat container
+    loginForm.style.display = "flex"; // show login form
+    currentRoom = ""; // reset current room
+    username = ""; // reset username
+    initSocket(); // reinitialize socket connection
+  }
+
+  // handle pressing Enter to submit the form
   usernameInput.addEventListener("keypress", function (e) {
     if (e.key === "Enter") {
       e.preventDefault();
@@ -43,68 +112,33 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
+  // handle Handle login form submission
   loginForm.onsubmit = function (e) {
     e.preventDefault();
     username = usernameInput.value.trim();
-    if (username) {
-      socket.emit("add user", username);
-      chatContainer.style.display = "flex"; // show chat window
-      loginForm.style.display = "none"; // hide login
-      input.focus(); // focus the message input
+    const room = roomInput.value.trim();
+    const password = passwordInput.value;
+    if (username && room) {
+      socket.emit("add user", { username, room, password });
+      currentRoom = room; // keep track of the current room
+      chatContainer.style.display = "grid"; // show chat container
+      loginForm.style.display = "none"; // hide login form
+      input.focus(); // focus on the message input
     }
   };
 
+  // handle chat message form submission
   form.onsubmit = function (e) {
     e.preventDefault();
     if (input.value.trim()) {
-      socket.emit("sendMessage", { message: input.value });
-      input.value = "";
+      socket.emit("sendMessage", {
+        username: username,
+        message: input.value,
+        room: currentRoom,
+      });
+      input.value = ""; // clear the input field
     }
   };
 
-  socket.on("message", (data) => {
-    const item = document.createElement("li");
-
-    if (data.systemMessage) {
-      item.classList.add("system-message");
-      item.textContent = data.message;
-    } else {
-      const usernameSpan = createUsernameSpan(data.username);
-      usernameSpan.classList.add("username-highlight");
-      usernameSpan.textContent = data.username;
-
-      item.classList.add(
-        data.username === username ? "msg-from-me" : "msg-from-others",
-      );
-      item.appendChild(usernameSpan);
-      item.append(` : ${data.message}`);
-    }
-
-    messages.appendChild(item);
-    messages.scrollTop = messages.scrollHeight;
-  });
-
-  socket.on("user joined", (data) => {
-    const existingUsers = Array.from(document.getElementById("users").children).map(
-      (userLi) => userLi.textContent,
-    );
-
-    if (!existingUsers.includes(data.username)) {
-      const userItem = document.createElement("li");
-      const usernameSpan = createUsernameSpan(data.username);
-      userItem.appendChild(usernameSpan);
-      document.getElementById("users").appendChild(userItem);
-    }
-  });
-
-  socket.on("user left", (username) => {
-    const userList = document.getElementById("users");
-    const userItems = userList.getElementsByTagName("li");
-    for (let item of userItems) {
-      if (item.textContent === username) {
-        userList.removeChild(item);
-        break;
-      }
-    }
-  });
+  initSocket(); // initialize the socket connection
 });

@@ -1,58 +1,64 @@
-body,
-html {
+html,
+body {
+    width: 100%;
     height: 100%;
-    margin: 0;
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     background: #ededed;
-    /* Light gray background */
     display: flex;
     justify-content: center;
     align-items: center;
+    margin: 0;
 }
 
 .chat-container {
-    position: absolute;
     display: grid;
-    grid-template-columns: 1fr 3fr;
+    grid-template-columns: 1fr 3fr 1fr;
     width: 80%;
-    max-width: 900px;
-    height: 500px;
+    height: 80%;
     background: #fff;
-    border-radius: 10px;
+    border-radius: 20px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     overflow: hidden;
+    position: relative;
 }
 
-.user-list {
+.user-list,
+.room-list {
     background-color: #333;
     color: #fff;
-    padding: 10px;
     overflow-y: auto;
-    overflow-x: auto;
-    width: 250px;
 }
 
-.user-list h3 {
+.user-list h3,
+.room-list h3 {
     text-align: center;
+    margin: 0;
+    padding: 10px;
+    background-color: #444;
 }
 
-.user-list ul {
+.user-list ul,
+.room-list ul {
     list-style: none;
     padding: 0;
+    margin: 0;
 }
 
-.user-list li {
-    padding: 10px 0;
+.user-list li,
+.room-list li {
+    padding: 10px;
     border-bottom: 1px solid #474747;
     text-align: center;
+}
+
+.room-list li.current-room {
+    text-decoration: underline;
 }
 
 .chat-box {
     display: flex;
     flex-direction: column;
-    overflow-y: auto;
-    overflow-x: auto;
-    width: 630px;
+    overflow: hidden;
 }
 
 .chat-header {
@@ -64,10 +70,10 @@ html {
 }
 
 .messages {
-    flex-grow: 3;
+    flex-grow: 1;
     overflow-y: auto;
-    padding: 20px;
-    background-color: #f7f7f7;
+    padding: 25px;
+    background-color: white;
     font-size: 18px;
 }
 
@@ -95,40 +101,52 @@ html {
 }
 
 .username-form {
-    position: absolute;
-    width: 300px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
     background: whitesmoke;
     padding: 20px;
-    box-shadow: 10px 10px 10px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     border-radius: 15px;
-    top: 190px;
-    align-self: center;
-    align-items: center;
+    width: 300px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
 }
 
-.username-form input {
-    margin-left: 30px;
+.username-form input,
+.username-form button {
+    width: 80%;
+    margin: 10px auto;
+    padding: 10px;
+}
+
+.username-form input[type="text"],
+.username-form input[type="password"] {
+    border: 1px solid #ccc;
+    border-radius: 4px;
 }
 
 .username-form button {
-    margin-left: 20px;
+    background-color: #007bff;
+    border: none;
+    border-radius: 4px;
+    color: white;
+    cursor: pointer;
 }
 
-.system-message {
+.system-message,
+.username-highlight {
     font-style: italic;
     color: grey;
-    text-align: center;
-    margin-left: auto;
-    margin-right: auto;
-    font-size: 11px;
 }
 
 .username-highlight {
     font-weight: bold;
-    color: inherit; /* Use the color defined in the style attribute */
     text-shadow:
         -1px -1px 0 #000,
         1px -1px 0 #000,
         -1px 1px 0 #000,
-        1px 1px 0 #000; /* This creates an outline effect */
+        1px 1px 0 #000;
 }

@@ -29,13 +29,32 @@
                     <button type="submit">Send</button>
                 </form>
             </div>
+            <div class="room-list">
+                <h3>Rooms</h3>
+                <ul id="rooms">
+                    <!-- Dynamically populated room list -->
+                </ul>
+            </div>
         </div>
+
         <form id="loginForm" class="username-form">
             <input
                 type="text"
                 id="usernameInput"
                 autocomplete="off"
-                placeholder="Enter your nickname"
+                placeholder="Enter your username"
+            />
+            <input
+                type="text"
+                id="roomInput"
+                autocomplete="off"
+                placeholder="Enter room name"
+            />
+            <input
+                type="password"
+                id="passwordInput"
+                autocomplete="off"
+                placeholder="Enter room password (optional)"
             />
             <button type="submit">Join Chat</button>
         </form>

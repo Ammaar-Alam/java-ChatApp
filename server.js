@@ -7,53 +7,69 @@ const app = express();
 const server = http.createServer(app);
 const io = socketIo(server);
 
+
 // serve static files from the directory where index.html is located
 app.use(express.static(path.join(__dirname)));
 
+let rooms = {}; // Stores room details including users and passwords
+
 io.on("connection", (socket) => {
+  socket.emit("update room list", Object.keys(rooms));
+  // Emit the current list of all users across rooms upon new client connection
+  const allUsers = Object.values(rooms).flatMap((room) => Object.values(room.users));
+  socket.emit("update user list", allUsers);
   console.log("New client connected");
   let addedUser = false;
+  let currentRoom = "";
 
   socket.on("disconnect", () => {
-    if (addedUser) {
-      io.emit("user left", socket.username);
+    if (addedUser && currentRoom) {
+      // Remove user from room
+      if (rooms[currentRoom]) {
+        delete rooms[currentRoom].users[socket.id];
+        io.in(currentRoom).emit(
+          "update user list",
+          Object.values(rooms[currentRoom].users),
+        );
+      }
 
-      // snd a 'user left' chat message
-      io.emit("message", {
-        username: "",
-        message: `${socket.username} has left the chat`,
-        systemMessage: true,
+      io.in(currentRoom).emit("user left", {
+        username: socket.username,
+        room: currentRoom,
       });
 
-      console.log(`${socket.username} disconnected`);
+      console.log(`${socket.username} disconnected from ${currentRoom}`);
     }
   });
 
-  socket.on("add user", (username) => {
+  socket.on("add user", ({ username, room, password }) => {
     if (addedUser) return;
+
     socket.username = username;
     addedUser = true;
+    currentRoom = room;
 
-    // announce to other users that someone has joined
-    io.emit("user joined", { username: socket.username });
+    if (!rooms[room]) {
+      rooms[room] = { password: password || null, users: {} };
+    } else if (rooms[room].password !== password) {
+      socket.emit("password incorrect");
+      return;
+    }
 
-    // send a 'user joined' chat message
-    io.emit("message", {
-      username: "", // leave username empty for system messages
-      message: `${username} joined the chat`,
-      systemMessage: true, // add an indicator that this is a system message
-    });
+    rooms[room].users[socket.id] = username;
+    socket.join(room);
+
+    // After adding user to the room, emit the user list for that room
+    const usersInRoom = Object.values(rooms[room].users);
+    io.in(room).emit("update user list", Object.values(rooms[room].users));
+    io.emit("update room list", Object.keys(rooms)); // Update all clients with the new room list
+
+    socket.emit("user joined", { username: socket.username, room: room });
   });
 
   socket.on("sendMessage", (data) => {
-    if (!addedUser) {
-      // assume the username is available but the user hasn't been flagged as added.
-      addedUser = true; // mark the user as added.
-      // check if the username is set; if not, default to "Anonymous"
-      socket.username = socket.username || "Anonymous";
-      io.emit("user joined", { username: socket.username });
-    }
-    io.emit("message", {
+    if (!addedUser || !currentRoom) return;
+    io.in(currentRoom).emit("message", {
       username: socket.username,
       message: data.message,
     });
