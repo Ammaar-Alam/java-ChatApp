@@ -9,11 +9,11 @@ const io = socketIo(server);
 
 app.use(express.static(path.join(__dirname)));
 
-let rooms = {}; // stores room details including users and passwords
+let rooms = {}; // Stores room details including users and passwords
 
 io.on("connection", (socket) => {
   socket.emit("update room list", Object.keys(rooms));
-  // emit the current list of all users across rooms upon new client connection
+  // Emit the current list of all users across rooms upon new client connection
   const allUsers = Object.values(rooms).flatMap((room) => Object.values(room.users));
   socket.emit("update user list", allUsers);
   console.log("New client connected");
@@ -23,7 +23,7 @@ io.on("connection", (socket) => {
 
   socket.on("disconnect", () => {
     if (addedUser && currentRoom) {
-      // remove user from room
+      // Remove user from room
       if (rooms[currentRoom]) {
         delete rooms[currentRoom].users[socket.id];
         io.in(currentRoom).emit(
@@ -40,7 +40,20 @@ io.on("connection", (socket) => {
   });
 
   socket.on("add user", ({ username, room, password }) => {
-    if (addedUser) return;
+    if (addedUser && currentRoom) {
+      // Leave the current room
+      socket.leave(currentRoom);
+      delete rooms[currentRoom].users[socket.id];
+      io.in(currentRoom).emit(
+        "update user list",
+        Object.values(rooms[currentRoom].users),
+      );
+      io.in(currentRoom).emit("message", {
+        systemMessage: true,
+        message: `${socket.username} left the chat`,
+      });
+      console.log(`${socket.username} left room: ${currentRoom}`);
+    }
 
     socket.username = username;
     addedUser = true;
@@ -49,7 +62,7 @@ io.on("connection", (socket) => {
     if (!rooms[room]) {
       rooms[room] = { password: password || null, users: {} };
       console.log(`Room created: ${room} with password: ${password || "none"}`);
-    } else if (rooms[room].password !== password) {
+    } else if (rooms[room].password && rooms[room].password !== password) {
       socket.emit("password incorrect");
       return;
     }
@@ -57,10 +70,10 @@ io.on("connection", (socket) => {
     rooms[room].users[socket.id] = username;
     socket.join(room);
 
-    // after adding user to the room, emit the user list for that room
+    // After adding user to the room, emit the user list for that room
     const usersInRoom = Object.values(rooms[room].users);
     io.in(room).emit("update user list", usersInRoom);
-    io.emit("update room list", Object.keys(rooms)); // update all clients with the new room list
+    io.emit("update room list", Object.keys(rooms)); // Update all clients with the new room list
 
     socket.emit("user joined", { username: socket.username, room: room });
     io.in(room).emit("message", {

@@ -13,10 +13,10 @@ document.addEventListener("DOMContentLoaded", () => {
   let currentRoom = "";
   let username = "";
 
-  // initialize socket connection
+  // Initialize socket connection
   function initSocket() {
     if (socket) {
-      socket.disconnect(); // disconnect existing socket if any
+      socket.disconnect(); // Disconnect existing socket if any
     }
     socket = io();
 
@@ -31,12 +31,12 @@ document.addEventListener("DOMContentLoaded", () => {
         item.append(`: ${data.message}`);
       }
       messages.appendChild(item);
-      messages.scrollTop = messages.scrollHeight; // scroll to latest message
+      messages.scrollTop = messages.scrollHeight; // Scroll to latest message
     });
 
     socket.on("update user list", (usernames) => {
       const usersList = document.getElementById("users");
-      usersList.innerHTML = ""; // clear existing user list
+      usersList.innerHTML = ""; // Clear existing user list
       usernames.forEach((user) => {
         const userItem = document.createElement("li");
         const usernameSpan = createUsernameSpan(user);
@@ -47,12 +47,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
     socket.on("update room list", (rooms) => {
       const roomsList = document.getElementById("rooms");
-      roomsList.innerHTML = ""; // clear existing room list
+      roomsList.innerHTML = ""; // Clear existing room list
       rooms.forEach((roomName) => {
         const roomItem = document.createElement("li");
         roomItem.textContent = roomName;
+        roomItem.addEventListener("click", () => joinRoom(roomName)); // Add click event listener
         if (roomName === currentRoom) {
-          roomItem.classList.add("current-room"); // highlight current room
+          roomItem.classList.add("current-room"); // Highlight current room
         }
         roomsList.appendChild(roomItem);
       });
@@ -60,7 +61,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     socket.on("password incorrect", () => {
       alert("Password incorrect. Please try again.");
-      resetChatState(); // reset state on incorrect password
+      resetChatState(); // Reset state on incorrect password
     });
 
     socket.on("connect", () => {
@@ -72,7 +73,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // generate a random color for username
+  // Generate a random color for username
   function getRandomColor() {
     const letters = "0123456789ABCDEF";
     let color = "#";
@@ -82,7 +83,7 @@ document.addEventListener("DOMContentLoaded", () => {
     return color;
   }
 
-  // create a span element for the username with a unique color
+  // Create a span element for the username with a unique color
   function createUsernameSpan(username) {
     if (!userColors.has(username)) {
       userColors.set(username, getRandomColor());
@@ -93,19 +94,19 @@ document.addEventListener("DOMContentLoaded", () => {
     return usernameSpan;
   }
 
-  // reset chat state and reinitialize socket connection
+  // Reset chat state and reinitialize socket connection
   function resetChatState() {
-    messages.innerHTML = ""; // clear messages
+    messages.innerHTML = ""; // Clear messages
     const usersList = document.getElementById("users");
-    usersList.innerHTML = ""; // clear user list
-    chatContainer.style.display = "none"; // hide chat container
-    loginForm.style.display = "flex"; // show login form
-    currentRoom = ""; // reset current room
-    username = ""; // reset username
-    initSocket(); // reinitialize socket connection
+    usersList.innerHTML = ""; // Clear user list
+    chatContainer.style.display = "none"; // Hide chat container
+    loginForm.style.display = "flex"; // Show login form
+    currentRoom = ""; // Reset current room
+    username = ""; // Reset username
+    initSocket(); // Reinitialize socket connection
   }
 
-  // handle pressing Enter to submit the form
+  // Handle pressing Enter to submit the form
   usernameInput.addEventListener("keypress", function (e) {
     if (e.key === "Enter") {
       e.preventDefault();
@@ -113,7 +114,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // handle login form submission
+  // Handle login form submission
   loginForm.onsubmit = function (e) {
     e.preventDefault();
     username = usernameInput.value.trim();
@@ -121,14 +122,14 @@ document.addEventListener("DOMContentLoaded", () => {
     const password = passwordInput.value;
     if (username && room) {
       socket.emit("add user", { username, room, password });
-      currentRoom = room; // keep track of the current room
-      chatContainer.style.display = "grid"; // show chat container
-      loginForm.style.display = "none"; // hide login form
-      input.focus(); // focus on the message input
+      currentRoom = room; // Keep track of the current room
+      chatContainer.style.display = "grid"; // Show chat container
+      loginForm.style.display = "none"; // Hide login form
+      input.focus(); // Focus on the message input
     }
   };
 
-  // handle chat message form submission
+  // Handle chat message form submission
   form.onsubmit = function (e) {
     e.preventDefault();
     if (input.value.trim()) {
@@ -137,9 +138,24 @@ document.addEventListener("DOMContentLoaded", () => {
         message: input.value,
         room: currentRoom,
       });
-      input.value = ""; // clear the input field
+      input.value = ""; // Clear the input field
     }
   };
 
-  initSocket(); // initialize the socket connection
+  // Join a room, prompt for password if needed
+  function joinRoom(roomName) {
+    if (roomName === currentRoom) return;
+
+    const password =
+      rooms[roomName] && rooms[roomName].password
+        ? prompt("Enter room password:")
+        : null;
+    socket.emit("add user", { username, room: roomName, password });
+    currentRoom = roomName; // Keep track of the current room
+    chatContainer.style.display = "grid"; // Show chat container
+    loginForm.style.display = "none"; // Hide login form
+    input.focus(); // Focus on the message input
+  }
+
+  initSocket(); // Initialize the socket connection
 });
