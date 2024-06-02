@@ -7,6 +7,8 @@ const app = express();
 const server = http.createServer(app);
 const io = socketIo(server);
 
+
+// serve static files from the directory where index.html is located
 app.use(express.static(path.join(__dirname)));
 
 let rooms = {}; // Stores room details including users and passwords
