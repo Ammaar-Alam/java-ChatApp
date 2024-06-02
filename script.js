@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
-  const socket = io();
+  let socket;
   const loginForm = document.getElementById("loginForm");
   const chatContainer = document.querySelector(".chat-container");
   const messages = document.getElementById("messages");
@@ -12,6 +12,63 @@ document.addEventListener("DOMContentLoaded", () => {
   const userColors = new Map();
   let currentRoom = "";
   let username = "";
+
+  function initSocket() {
+    if (socket) {
+      socket.disconnect();
+    }
+    socket = io();
+
+    socket.on("message", (data) => {
+      const item = document.createElement("li");
+      if (data.systemMessage) {
+        // System message handling remains unchanged
+      } else {
+        const usernameSpan = createUsernameSpan(data.username);
+        item.appendChild(usernameSpan);
+        item.append(`: ${data.message}`);
+      }
+      messages.appendChild(item);
+      messages.scrollTop = messages.scrollHeight;
+    });
+
+    socket.on("update user list", (usernames) => {
+      const usersList = document.getElementById("users");
+      usersList.innerHTML = "";
+      usernames.forEach((user) => {
+        const userItem = document.createElement("li");
+        const usernameSpan = createUsernameSpan(user);
+        userItem.appendChild(usernameSpan);
+        usersList.appendChild(userItem);
+      });
+    });
+
+    socket.on("update room list", (rooms) => {
+      const roomsList = document.getElementById("rooms");
+      roomsList.innerHTML = "";
+      rooms.forEach((roomName) => {
+        const roomItem = document.createElement("li");
+        roomItem.textContent = roomName;
+        if (roomName === currentRoom) {
+          roomItem.classList.add("current-room");
+        }
+        roomsList.appendChild(roomItem);
+      });
+    });
+
+    socket.on("password incorrect", () => {
+      alert("Password incorrect. Please try again.");
+      resetChatState();
+    });
+
+    socket.on("connect", () => {
+      console.log("Connected to server");
+    });
+
+    socket.on("disconnect", () => {
+      console.log("Disconnected from server");
+    });
+  }
 
   function getRandomColor() {
     const letters = "0123456789ABCDEF";
@@ -30,6 +87,17 @@ document.addEventListener("DOMContentLoaded", () => {
     usernameSpan.textContent = username;
     usernameSpan.style.color = userColors.get(username);
     return usernameSpan;
+  }
+
+  function resetChatState() {
+    messages.innerHTML = "";
+    const usersList = document.getElementById("users");
+    usersList.innerHTML = "";
+    chatContainer.style.display = "none";
+    loginForm.style.display = "flex";
+    currentRoom = "";
+    username = "";
+    initSocket();
   }
 
   usernameInput.addEventListener("keypress", function (e) {
@@ -65,48 +133,5 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   };
 
-  socket.on("message", (data) => {
-    const item = document.createElement("li");
-    if (data.systemMessage) {
-      // System message handling remains unchanged
-    } else {
-      const usernameSpan = createUsernameSpan(data.username);
-      item.appendChild(usernameSpan);
-      item.append(`: ${data.message}`);
-    }
-    messages.appendChild(item);
-    messages.scrollTop = messages.scrollHeight;
-  });
-
-  socket.on("update user list", (usernames) => {
-    const usersList = document.getElementById("users");
-    usersList.innerHTML = "";
-    usernames.forEach((user) => {
-      const userItem = document.createElement("li");
-      const usernameSpan = createUsernameSpan(user);
-      userItem.appendChild(usernameSpan);
-      usersList.appendChild(userItem);
-    });
-  });
-
-  socket.on("update room list", (rooms) => {
-    const roomsList = document.getElementById("rooms");
-    roomsList.innerHTML = "";
-    rooms.forEach((roomName) => {
-      const roomItem = document.createElement("li");
-      roomItem.textContent = roomName;
-      if (roomName === currentRoom) {
-        roomItem.classList.add("current-room");
-      }
-      roomsList.appendChild(roomItem);
-    });
-  });
-
-  socket.on("password incorrect", () => {
-    alert("Password incorrect. Please try again.");
-    roomInput.value = "";
-    passwordInput.value = "";
-    chatContainer.style.display = "none";
-    loginForm.style.display = "flex";
-  });
+  initSocket(); // Initialize the socket connection
 });
