@@ -56,8 +56,6 @@ io.on("connection", (socket) => {
     }
 
     socket.username = username;
-    addedUser = true;
-    currentRoom = room;
 
     if (!rooms[room]) {
       rooms[room] = { password: password || null, users: {} };
@@ -67,6 +65,8 @@ io.on("connection", (socket) => {
       return;
     }
 
+    addedUser = true;
+    currentRoom = room;
     rooms[room].users[socket.id] = username;
     socket.join(room);
 

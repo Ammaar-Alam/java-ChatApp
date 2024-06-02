@@ -68,6 +68,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     socket.on("password incorrect", () => {
       alert("Password incorrect. Please try again.");
+      // Reset the targetRoom to allow retrying
+      targetRoom = "";
     });
 
     socket.on("connect", () => {
@@ -168,10 +170,13 @@ document.addEventListener("DOMContentLoaded", () => {
   // Switch room
   function switchRoom(roomName, password) {
     socket.emit("add user", { username, room: roomName, password });
-    currentRoom = roomName; // Keep track of the current room
-    chatContainer.style.display = "grid"; // Show chat container
-    loginForm.style.display = "none"; // Hide login form
-    input.focus(); // Focus on the message input
+    // Only update currentRoom if the password is correct
+    socket.once("user joined", () => {
+      currentRoom = roomName; // Keep track of the current room
+      chatContainer.style.display = "grid"; // Show chat container
+      loginForm.style.display = "none"; // Hide login form
+      input.focus(); // Focus on the message input
+    });
   }
 
   // Modal event listeners
