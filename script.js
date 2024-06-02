@@ -79,6 +79,11 @@ document.addEventListener("DOMContentLoaded", () => {
     socket.on("disconnect", () => {
       console.log("Disconnected from server");
     });
+
+    socket.on("user joined", (data) => {
+      currentRoom = data.room; // Update currentRoom on successful join
+      highlightCurrentRoom();
+    });
   }
 
   // Generate a random color for username
@@ -134,6 +139,7 @@ document.addEventListener("DOMContentLoaded", () => {
       chatContainer.style.display = "grid"; // Show chat container
       loginForm.style.display = "none"; // Hide login form
       input.focus(); // Focus on the message input
+      highlightCurrentRoom();
     }
   };
 
@@ -141,11 +147,19 @@ document.addEventListener("DOMContentLoaded", () => {
   form.onsubmit = function (e) {
     e.preventDefault();
     if (input.value.trim()) {
+      const message = input.value;
       socket.emit("sendMessage", {
         username: username,
-        message: input.value,
+        message: message,
         room: currentRoom,
       });
+      // Display own message immediately
+      const item = document.createElement("li");
+      const usernameSpan = createUsernameSpan(username);
+      item.appendChild(usernameSpan);
+      item.append(`: ${message}`);
+      messages.appendChild(item);
+      messages.scrollTop = messages.scrollHeight; // Scroll to latest message
       input.value = ""; // Clear the input field
     }
   };
@@ -171,11 +185,23 @@ document.addEventListener("DOMContentLoaded", () => {
   function switchRoom(roomName, password) {
     socket.emit("add user", { username, room: roomName, password });
     // Only update currentRoom if the password is correct
-    socket.once("user joined", () => {
-      currentRoom = roomName; // Keep track of the current room
+    socket.once("user joined", (data) => {
+      currentRoom = data.room; // Keep track of the current room
       chatContainer.style.display = "grid"; // Show chat container
       loginForm.style.display = "none"; // Hide login form
       input.focus(); // Focus on the message input
+      highlightCurrentRoom();
+    });
+  }
+
+  // Highlight the current room
+  function highlightCurrentRoom() {
+    const roomItems = document.querySelectorAll(".room-list-item");
+    roomItems.forEach((item) => {
+      item.classList.remove("current-room");
+      if (item.textContent === currentRoom) {
+        item.classList.add("current-room");
+      }
     });
   }
 
