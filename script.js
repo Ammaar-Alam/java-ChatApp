@@ -13,9 +13,10 @@ document.addEventListener("DOMContentLoaded", () => {
   let currentRoom = "";
   let username = "";
 
+  // Initialize socket connection
   function initSocket() {
     if (socket) {
-      socket.disconnect();
+      socket.disconnect(); // Disconnect existing socket if any
     }
     socket = io();
 
@@ -29,12 +30,12 @@ document.addEventListener("DOMContentLoaded", () => {
         item.append(`: ${data.message}`);
       }
       messages.appendChild(item);
-      messages.scrollTop = messages.scrollHeight;
+      messages.scrollTop = messages.scrollHeight; // Scroll to latest message
     });
 
     socket.on("update user list", (usernames) => {
       const usersList = document.getElementById("users");
-      usersList.innerHTML = "";
+      usersList.innerHTML = ""; // Clear existing user list
       usernames.forEach((user) => {
         const userItem = document.createElement("li");
         const usernameSpan = createUsernameSpan(user);
@@ -45,12 +46,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
     socket.on("update room list", (rooms) => {
       const roomsList = document.getElementById("rooms");
-      roomsList.innerHTML = "";
+      roomsList.innerHTML = ""; // Clear existing room list
       rooms.forEach((roomName) => {
         const roomItem = document.createElement("li");
         roomItem.textContent = roomName;
         if (roomName === currentRoom) {
-          roomItem.classList.add("current-room");
+          roomItem.classList.add("current-room"); // Highlight current room
         }
         roomsList.appendChild(roomItem);
       });
@@ -58,7 +59,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     socket.on("password incorrect", () => {
       alert("Password incorrect. Please try again.");
-      resetChatState();
+      resetChatState(); // Reset state on incorrect password
     });
 
     socket.on("connect", () => {
@@ -70,6 +71,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  // Generate a random color for username
   function getRandomColor() {
     const letters = "0123456789ABCDEF";
     let color = "#";
@@ -79,6 +81,7 @@ document.addEventListener("DOMContentLoaded", () => {
     return color;
   }
 
+  // Create a span element for the username with a unique color
   function createUsernameSpan(username) {
     if (!userColors.has(username)) {
       userColors.set(username, getRandomColor());
@@ -89,17 +92,19 @@ document.addEventListener("DOMContentLoaded", () => {
     return usernameSpan;
   }
 
+  // Reset chat state and reinitialize socket connection
   function resetChatState() {
-    messages.innerHTML = "";
+    messages.innerHTML = ""; // Clear messages
     const usersList = document.getElementById("users");
-    usersList.innerHTML = "";
-    chatContainer.style.display = "none";
-    loginForm.style.display = "flex";
-    currentRoom = "";
-    username = "";
-    initSocket();
+    usersList.innerHTML = ""; // Clear user list
+    chatContainer.style.display = "none"; // Hide chat container
+    loginForm.style.display = "flex"; // Show login form
+    currentRoom = ""; // Reset current room
+    username = ""; // Reset username
+    initSocket(); // Reinitialize socket connection
   }
 
+  // Handle pressing Enter to submit the form
   usernameInput.addEventListener("keypress", function (e) {
     if (e.key === "Enter") {
       e.preventDefault();
@@ -107,6 +112,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
+  // Handle login form submission
   loginForm.onsubmit = function (e) {
     e.preventDefault();
     username = usernameInput.value.trim();
@@ -114,13 +120,14 @@ document.addEventListener("DOMContentLoaded", () => {
     const password = passwordInput.value;
     if (username && room) {
       socket.emit("add user", { username, room, password });
-      currentRoom = room;
-      chatContainer.style.display = "grid";
-      loginForm.style.display = "none";
-      input.focus();
+      currentRoom = room; // Keep track of the current room
+      chatContainer.style.display = "grid"; // Show chat container
+      loginForm.style.display = "none"; // Hide login form
+      input.focus(); // Focus on the message input
     }
   };
 
+  // Handle chat message form submission
   form.onsubmit = function (e) {
     e.preventDefault();
     if (input.value.trim()) {
@@ -129,7 +136,7 @@ document.addEventListener("DOMContentLoaded", () => {
         message: input.value,
         room: currentRoom,
       });
-      input.value = "";
+      input.value = ""; // Clear the input field
     }
   };
 
