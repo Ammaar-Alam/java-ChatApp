@@ -1,61 +1,52 @@
-html {
-    width: 100%;
-    justify-content: center;
-    align-items: center;
-    overflow: hidden;
-    height: 100%;
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-    background: #ededed;
-    text-align: -webkit-center;
-}
-
+html,
 body {
+    width: 100%;
     height: 100%;
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     background: #ededed;
     display: flex;
     justify-content: center;
     align-items: center;
-    overflow: hidden;
-    width: 75%;
+    margin: 0;
 }
 
 .chat-container {
     display: grid;
     grid-template-columns: 1fr 3fr 1fr;
-    /* Adjusted to include room list on the right */
-    width: 100%;
-    max-width: auto;
-    /* Increased max-width to accommodate room list */
-    height: 500px;
+    width: 80%;
+    height: 80%;
     background: #fff;
     border-radius: 20px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     overflow: hidden;
     position: relative;
-    /* Ensure this is set for absolute positioning within */
 }
 
-/* Add styles for room list, similar to user-list */
+.user-list,
 .room-list {
     background-color: #333;
     color: #fff;
     overflow-y: auto;
-    overflow-x: auto;
-    width: 30%;
 }
 
+.user-list h3,
 .room-list h3 {
     text-align: center;
+    margin: 0;
+    padding: 10px;
+    background-color: #444;
 }
 
+.user-list ul,
 .room-list ul {
     list-style: none;
     padding: 0;
+    margin: 0;
 }
 
+.user-list li,
 .room-list li {
-    padding: 10px 0;
+    padding: 10px;
     border-bottom: 1px solid #474747;
     text-align: center;
 }
@@ -64,36 +55,10 @@ body {
     text-decoration: underline;
 }
 
-.user-list {
-    background-color: #333;
-    color: #fff;
-    overflow-y: auto;
-    overflow-x: auto;
-    width: 40%;
-}
-
-.user-list h3 {
-    text-align: center;
-}
-
-.user-list ul {
-    list-style: none;
-    padding: 0;
-}
-
-.user-list li {
-    padding: 10px 0;
-    border-bottom: 1px solid #474747;
-    text-align: center;
-}
-
 .chat-box {
     display: flex;
     flex-direction: column;
-    overflow-y: auto;
-    overflow-x: auto;
-    width: -webkit-fill-available;
-    text-align: justify;
+    overflow: hidden;
 }
 
 .chat-header {
@@ -105,19 +70,17 @@ body {
 }
 
 .messages {
-    flex-grow: 3;
+    flex-grow: 1;
     overflow-y: auto;
     padding: 25px;
     background-color: white;
     font-size: 18px;
-    max-width: auto;
 }
 
 .input-area {
     padding: 20px;
     display: flex;
     border-top: 1px solid #ccc;
-    max-width: auto;
 }
 
 .input-area input {
@@ -141,13 +104,11 @@ body {
     display: flex;
     flex-direction: column;
     gap: 10px;
-    /* Provides consistent spacing between form elements */
     background: whitesmoke;
     padding: 20px;
-    box-shadow: 10px 10px 10px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     border-radius: 15px;
     width: 300px;
-    /* Adjust width as needed */
     position: absolute;
     top: 50%;
     left: 50%;
@@ -156,13 +117,9 @@ body {
 
 .username-form input,
 .username-form button {
-    display: block;
     width: 80%;
-    /* Make inputs and button take up most of the form width */
     margin: 10px auto;
-    /* Center align and add some vertical spacing */
     padding: 10px;
-    /* Make inputs taller for better clickability */
 }
 
 .username-form input[type="text"],
