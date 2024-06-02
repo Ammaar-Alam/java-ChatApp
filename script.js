@@ -8,7 +8,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const usernameInput = document.getElementById("usernameInput");
   const roomInput = document.getElementById("roomInput");
   const passwordInput = document.getElementById("passwordInput");
-  const joinButton = loginForm.querySelector('button[type="submit"]');
   const userColors = new Map();
   let currentRoom = "";
   let username = "";
@@ -19,6 +18,27 @@ document.addEventListener("DOMContentLoaded", () => {
   const modalSubmit = document.getElementById("modalSubmit");
   let targetRoom = ""; // Room user wants to join
 
+  // Generate a random color for username
+  function getRandomColor() {
+    const letters = "0123456789ABCDEF";
+    let color = "#";
+    for (let i = 0; i < 6; i++) {
+      color += letters[Math.floor(Math.random() * 16)];
+    }
+    return color;
+  }
+
+  // Create a span element for the username with a unique color
+  function createUsernameSpan(username) {
+    if (!userColors.has(username)) {
+      userColors.set(username, getRandomColor());
+    }
+    const usernameSpan = document.createElement("span");
+    usernameSpan.textContent = username;
+    usernameSpan.style.color = userColors.get(username);
+    return usernameSpan;
+  }
+
   // Initialize socket connection
   function initSocket() {
     if (socket) {
@@ -26,7 +46,11 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     socket = io();
 
+    // Remove any existing listeners to avoid duplication
+    socket.removeAllListeners();
+
     socket.on("message", (data) => {
+      console.log("Received message:", data);
       const item = document.createElement("li");
       if (data.systemMessage) {
         item.textContent = data.message;
@@ -84,48 +108,10 @@ document.addEventListener("DOMContentLoaded", () => {
       currentRoom = data.room; // Update currentRoom on successful join
       highlightCurrentRoom();
     });
-  }
 
-  // Generate a random color for username
-  function getRandomColor() {
-    const letters = "0123456789ABCDEF";
-    let color = "#";
-    for (let i = 0; i < 6; i++) {
-      color += letters[Math.floor(Math.random() * 16)];
-    }
-    return color;
+    form.removeEventListener("submit", handleFormSubmit);
+    form.addEventListener("submit", handleFormSubmit);
   }
-
-  // Create a span element for the username with a unique color
-  function createUsernameSpan(username) {
-    if (!userColors.has(username)) {
-      userColors.set(username, getRandomColor());
-    }
-    const usernameSpan = document.createElement("span");
-    usernameSpan.textContent = username;
-    usernameSpan.style.color = userColors.get(username);
-    return usernameSpan;
-  }
-
-  // Reset chat state and reinitialize socket connection
-  function resetChatState() {
-    messages.innerHTML = ""; // Clear messages
-    const usersList = document.getElementById("users");
-    usersList.innerHTML = ""; // Clear user list
-    chatContainer.style.display = "none"; // Hide chat container
-    loginForm.style.display = "flex"; // Show login form
-    currentRoom = ""; // Reset current room
-    username = ""; // Reset username
-    initSocket(); // Reinitialize socket connection
-  }
-
-  // Handle pressing Enter to submit the form
-  usernameInput.addEventListener("keypress", function (e) {
-    if (e.key === "Enter") {
-      e.preventDefault();
-      joinButton.click();
-    }
-  });
 
   // Handle login form submission
   loginForm.onsubmit = function (e) {
@@ -144,8 +130,9 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   // Handle chat message form submission
-  form.onsubmit = function (e) {
+  function handleFormSubmit(e) {
     e.preventDefault();
+    console.log("Form submitted");
     if (input.value.trim()) {
       const message = input.value;
       socket.emit("sendMessage", {
@@ -154,15 +141,20 @@ document.addEventListener("DOMContentLoaded", () => {
         room: currentRoom,
       });
       // Display own message immediately
-      const item = document.createElement("li");
-      const usernameSpan = createUsernameSpan(username);
-      item.appendChild(usernameSpan);
-      item.append(`: ${message}`);
-      messages.appendChild(item);
-      messages.scrollTop = messages.scrollHeight; // Scroll to latest message
+      displayOwnMessage(username, message);
       input.value = ""; // Clear the input field
     }
-  };
+  }
+
+  // Display own message
+  function displayOwnMessage(username, message) {
+    const item = document.createElement("li");
+    const usernameSpan = createUsernameSpan(username);
+    item.appendChild(usernameSpan);
+    item.append(`: ${message}`);
+    messages.appendChild(item);
+    messages.scrollTop = messages.scrollHeight; // Scroll to latest message
+  }
 
   // Join a room, prompt for password if needed
   function joinRoom(roomName) {
