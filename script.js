@@ -151,13 +151,6 @@ document.addEventListener("DOMContentLoaded", () => {
         message: message,
         room: currentRoom,
       });
-      // Display own message immediately
-      const item = document.createElement("li");
-      const usernameSpan = createUsernameSpan(username);
-      item.appendChild(usernameSpan);
-      item.append(`: ${message}`);
-      messages.appendChild(item);
-      messages.scrollTop = messages.scrollHeight; // Scroll to latest message
       input.value = ""; // Clear the input field
     }
   }
