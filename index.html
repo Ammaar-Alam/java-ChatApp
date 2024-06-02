@@ -4,7 +4,7 @@
         <meta charset="UTF-8" />
         <title>Chat Application</title>
         <link rel="stylesheet" href="styles.css" />
-        <script src="node_modules/socket.io/client-dist/socket.io.js"></script>
+        <script src="/socket.io/socket.io.js"></script>
         <script defer src="script.js"></script>
     </head>
     <body>
@@ -58,5 +58,19 @@
             />
             <button type="submit">Join Chat</button>
         </form>
+
+        <!-- Password prompt modal -->
+        <div id="passwordModal" class="modal">
+            <div class="modal-content">
+                <span id="closeModal" class="close">&times;</span>
+                <p>Enter the password for the room:</p>
+                <input
+                    type="password"
+                    id="modalPasswordInput"
+                    placeholder="Room password"
+                />
+                <button id="modalSubmit">Submit</button>
+            </div>
+        </div>
     </body>
 </html>

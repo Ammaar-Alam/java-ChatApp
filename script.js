@@ -13,6 +13,12 @@ document.addEventListener("DOMContentLoaded", () => {
   let currentRoom = "";
   let username = "";
 
+  const passwordModal = document.getElementById("passwordModal");
+  const closeModal = document.getElementById("closeModal");
+  const modalPasswordInput = document.getElementById("modalPasswordInput");
+  const modalSubmit = document.getElementById("modalSubmit");
+  let targetRoom = ""; // Room user wants to join
+
   // Initialize socket connection
   function initSocket() {
     if (socket) {
@@ -51,6 +57,7 @@ document.addEventListener("DOMContentLoaded", () => {
       rooms.forEach((roomName) => {
         const roomItem = document.createElement("li");
         roomItem.textContent = roomName;
+        roomItem.classList.add("room-list-item");
         roomItem.addEventListener("click", () => joinRoom(roomName)); // Add click event listener
         if (roomName === currentRoom) {
           roomItem.classList.add("current-room"); // Highlight current room
@@ -61,7 +68,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     socket.on("password incorrect", () => {
       alert("Password incorrect. Please try again.");
-      resetChatState(); // Reset state on incorrect password
     });
 
     socket.on("connect", () => {
@@ -146,16 +152,46 @@ document.addEventListener("DOMContentLoaded", () => {
   function joinRoom(roomName) {
     if (roomName === currentRoom) return;
 
-    const password =
-      rooms[roomName] && rooms[roomName].password
-        ? prompt("Enter room password:")
-        : null;
+    targetRoom = roomName;
+    // Simulate getting the room's password requirement from the server
+    socket.emit("get room info", roomName, (roomInfo) => {
+      if (roomInfo && roomInfo.passwordRequired) {
+        // Show the modal
+        passwordModal.style.display = "block";
+        modalPasswordInput.focus();
+      } else {
+        switchRoom(roomName, null);
+      }
+    });
+  }
+
+  // Switch room
+  function switchRoom(roomName, password) {
     socket.emit("add user", { username, room: roomName, password });
     currentRoom = roomName; // Keep track of the current room
     chatContainer.style.display = "grid"; // Show chat container
     loginForm.style.display = "none"; // Hide login form
     input.focus(); // Focus on the message input
   }
+
+  // Modal event listeners
+  closeModal.onclick = function () {
+    passwordModal.style.display = "none";
+  };
+
+  modalSubmit.onclick = function () {
+    const password = modalPasswordInput.value;
+    passwordModal.style.display = "none";
+    modalPasswordInput.value = ""; // Clear the input field
+    switchRoom(targetRoom, password);
+  };
+
+  // Close the modal if the user clicks outside of it
+  window.onclick = function (event) {
+    if (event.target == passwordModal) {
+      passwordModal.style.display = "none";
+    }
+  };
 
   initSocket(); // Initialize the socket connection
 });

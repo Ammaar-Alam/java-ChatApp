@@ -94,6 +94,14 @@ io.on("connection", (socket) => {
       `Message from ${socket.username} in room ${currentRoom}: ${data.message}`,
     );
   });
+
+  socket.on("get room info", (roomName, callback) => {
+    if (rooms[roomName]) {
+      callback({ passwordRequired: !!rooms[roomName].password });
+    } else {
+      callback({ passwordRequired: false });
+    }
+  });
 });
 
 const PORT = process.env.PORT || 1170;
