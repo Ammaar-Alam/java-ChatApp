@@ -97,8 +97,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
       socket.on("password incorrect", () => {
         alert("Password incorrect. Please try again.");
-        // Reset the targetRoom to allow retrying
-        targetRoom = "";
+        targetRoom = ""; // Reset the targetRoom to allow retrying
+        highlightCurrentRoom(); // Ensure current room is highlighted
+        console.log("Password incorrect. Current room:", currentRoom);
       });
 
       socket.on("connect", () => {
