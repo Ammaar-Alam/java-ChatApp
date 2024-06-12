@@ -13,7 +13,6 @@ let rooms = {}; // stores room details including users and passwords
 
 io.on("connection", (socket) => {
   socket.emit("update room list", Object.keys(rooms));
-  // emit the current list of all users across rooms upon new client connection
   const allUsers = Object.values(rooms).flatMap((room) => Object.values(room.users));
   socket.emit("update user list", allUsers);
   console.log("New client connected");
@@ -23,7 +22,6 @@ io.on("connection", (socket) => {
 
   socket.on("disconnect", () => {
     if (addedUser && currentRoom) {
-      // remove user from room
       if (rooms[currentRoom]) {
         delete rooms[currentRoom].users[socket.id];
         io.in(currentRoom).emit(
@@ -41,38 +39,53 @@ io.on("connection", (socket) => {
 
   socket.on("add user", ({ username, room, password }) => {
     if (addedUser && currentRoom && currentRoom !== room) {
-      // only attempt to join new room if password is correct
-      if (
-        !rooms[room] ||
-        (rooms[room].password && rooms[room].password === password)
-      ) {
-        // leave the current room only if switching to a new room with correct password
-        console.log(`${socket.username} attempting to leave room: ${currentRoom}`);
-        socket.leave(currentRoom);
-        delete rooms[currentRoom].users[socket.id];
-        io.in(currentRoom).emit(
-          "update user list",
-          Object.values(rooms[currentRoom].users),
-        );
-        io.in(currentRoom).emit("message", {
-          systemMessage: true,
-          message: `${socket.username} left the chat`,
-        });
-        console.log(`${socket.username} left room: ${currentRoom}`);
-
-        // proceed to join new room
-        joinRoom({ username, room, password });
-      } else {
-        socket.emit("password incorrect");
-        console.log(`Password incorrect for room: ${room}`);
-      }
+      validatePassword(room, password, (isValid) => {
+        if (isValid) {
+          switchRoom(socket, { room, username });
+        } else {
+          socket.emit("password incorrect");
+          console.log(`Password incorrect for room: ${room}`);
+        }
+      });
     } else {
-      // joining the initial room or rejoining the same room
-      joinRoom({ username, room, password });
+      validatePassword(room, password, (isValid) => {
+        if (isValid) {
+          joinRoom(socket, { room, username, password });
+        } else {
+          socket.emit("password incorrect");
+          console.log(`Password incorrect for room: ${room}`);
+        }
+      });
     }
   });
 
-  function joinRoom({ username, room, password }) {
+  function switchRoom(socket, { room, username }) {
+    if (currentRoom) {
+      socket.leave(currentRoom);
+      delete rooms[currentRoom].users[socket.id];
+      io.in(currentRoom).emit(
+        "update user list",
+        Object.values(rooms[currentRoom].users),
+      );
+      io.in(currentRoom).emit("message", {
+        systemMessage: true,
+        message: `${socket.username} left the chat`,
+      });
+      console.log(`${socket.username} left room: ${currentRoom}`);
+    }
+
+    joinRoom(socket, { room, username });
+  }
+
+  function validatePassword(room, password, callback) {
+    if (!rooms[room] || !rooms[room].password || rooms[room].password === password) {
+      callback(true);
+    } else {
+      callback(false);
+    }
+  }
+
+  function joinRoom(socket, { username, room, password }) {
     socket.username = username;
 
     if (!rooms[room]) {
@@ -85,10 +98,9 @@ io.on("connection", (socket) => {
     rooms[room].users[socket.id] = username;
     socket.join(room);
 
-    // after adding user to the room, emit the user list for that room
     const usersInRoom = Object.values(rooms[room].users);
     io.in(room).emit("update user list", usersInRoom);
-    io.emit("update room list", Object.keys(rooms)); // update all clients with the new room list
+    io.emit("update room list", Object.keys(rooms));
 
     socket.emit("user joined", { username: socket.username, room: room });
     io.in(room).emit("message", {
