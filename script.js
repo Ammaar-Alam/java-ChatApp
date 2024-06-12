@@ -19,7 +19,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const modalSubmit = document.getElementById("modalSubmit");
   let targetRoom = ""; // room user wants to join
 
-  // generate a random color for username
   function getRandomColor() {
     const letters = "0123456789ABCDEF";
     let color = "#";
@@ -29,7 +28,6 @@ document.addEventListener("DOMContentLoaded", () => {
     return color;
   }
 
-  // create a span element for the username with a unique color
   function createUsernameSpan(username) {
     if (!userColors.has(username)) {
       userColors.set(username, getRandomColor());
@@ -40,17 +38,14 @@ document.addEventListener("DOMContentLoaded", () => {
     return usernameSpan;
   }
 
-  // initialize socket connection
   function initSocket() {
     if (socket) {
-      socket.disconnect(); // disconnect existing socket if any
+      socket.disconnect();
     }
     socket = io();
 
-    // clear existing event listeners to avoid duplication
     socket.removeAllListeners();
 
-    // add listeners if not already added
     if (!listenersAdded) {
       socket.on("message", (data) => {
         console.log("Received message:", data);
@@ -64,13 +59,13 @@ document.addEventListener("DOMContentLoaded", () => {
           item.append(`: ${data.message}`);
         }
         messages.appendChild(item);
-        messages.scrollTop = messages.scrollHeight; // scroll to latest message
+        messages.scrollTop = messages.scrollHeight;
       });
 
       socket.on("update user list", (usernames) => {
         console.log("Updating user list:", usernames);
         const usersList = document.getElementById("users");
-        usersList.innerHTML = ""; // clear existing user list
+        usersList.innerHTML = "";
         usernames.forEach((user) => {
           const userItem = document.createElement("li");
           const usernameSpan = createUsernameSpan(user);
@@ -82,14 +77,14 @@ document.addEventListener("DOMContentLoaded", () => {
       socket.on("update room list", (rooms) => {
         console.log("Updating room list:", rooms);
         const roomsList = document.getElementById("rooms");
-        roomsList.innerHTML = ""; // clear existing room list
+        roomsList.innerHTML = "";
         rooms.forEach((roomName) => {
           const roomItem = document.createElement("li");
           roomItem.textContent = roomName;
           roomItem.classList.add("room-list-item");
-          roomItem.addEventListener("click", () => joinRoom(roomName)); // add click event listener
+          roomItem.addEventListener("click", () => joinRoom(roomName));
           if (roomName === currentRoom) {
-            roomItem.classList.add("current-room"); // highlight current room
+            roomItem.classList.add("current-room");
           }
           roomsList.appendChild(roomItem);
         });
@@ -112,18 +107,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
       socket.on("user joined", (data) => {
         console.log("User joined:", data);
-        currentRoom = data.room; // update currentRoom on successful join
+        currentRoom = data.room;
         highlightCurrentRoom();
       });
 
-      listenersAdded = true; // mark listeners as added
+      listenersAdded = true;
     }
 
     form.removeEventListener("submit", handleFormSubmit);
     form.addEventListener("submit", handleFormSubmit);
   }
 
-  // handle login form submission
   loginForm.onsubmit = function (e) {
     e.preventDefault();
     username = usernameInput.value.trim();
@@ -132,15 +126,18 @@ document.addEventListener("DOMContentLoaded", () => {
     console.log("Login form submitted:", { username, room, password });
     if (username && room) {
       socket.emit("add user", { username, room, password });
-      currentRoom = room; // keep track of the current room
-      chatContainer.style.display = "grid"; // show chat container
-      loginForm.style.display = "none"; // hide login form
-      input.focus(); // focus on the message input
-      highlightCurrentRoom();
+
+      // Only update currentRoom and display the chat container if password is correct
+      socket.on("user joined", (data) => {
+        currentRoom = data.room;
+        chatContainer.style.display = "grid";
+        loginForm.style.display = "none";
+        input.focus();
+        highlightCurrentRoom();
+      });
     }
   };
 
-  // handle chat message form submission
   function handleFormSubmit(e) {
     e.preventDefault();
     console.log("Form submitted");
@@ -152,20 +149,17 @@ document.addEventListener("DOMContentLoaded", () => {
         message: message,
         room: currentRoom,
       });
-      input.value = ""; // clear the input field
+      input.value = "";
     }
   }
 
-  // join a room, prompt for password if needed
   function joinRoom(roomName) {
     if (roomName === currentRoom) return;
 
     targetRoom = roomName;
     console.log("Attempting to join room:", roomName);
-    // simulate getting the room's password requirement from the server
     socket.emit("get room info", roomName, (roomInfo) => {
       if (roomInfo && roomInfo.passwordRequired) {
-        // show the modal
         console.log("Password required for room:", roomName);
         passwordModal.style.display = "block";
         modalPasswordInput.focus();
@@ -175,21 +169,20 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // switch room
   function switchRoom(roomName, password) {
     console.log("Switching room:", { roomName, password });
     socket.emit("add user", { username, room: roomName, password });
-    // only update currentRoom if the password is correct
-    socket.once("user joined", (data) => {
-      currentRoom = data.room; // keep track of the current room
-      chatContainer.style.display = "grid"; // show chat container
-      loginForm.style.display = "none"; // hide login form
-      input.focus(); // focus on the message input
+
+    // Only update currentRoom and display the chat container if password is correct
+    socket.on("user joined", (data) => {
+      currentRoom = data.room;
+      chatContainer.style.display = "grid";
+      loginForm.style.display = "none";
+      input.focus();
       highlightCurrentRoom();
     });
   }
 
-  // highlight the current room
   function highlightCurrentRoom() {
     const roomItems = document.querySelectorAll(".room-list-item");
     roomItems.forEach((item) => {
@@ -200,7 +193,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // modal event listeners
   closeModal.onclick = function () {
     passwordModal.style.display = "none";
   };
@@ -209,16 +201,15 @@ document.addEventListener("DOMContentLoaded", () => {
     const password = modalPasswordInput.value;
     console.log("Submitting password for room:", { targetRoom, password });
     passwordModal.style.display = "none";
-    modalPasswordInput.value = ""; // clear the input field
+    modalPasswordInput.value = "";
     switchRoom(targetRoom, password);
   };
 
-  // close the modal if the user clicks outside of it
   window.onclick = function (event) {
     if (event.target == passwordModal) {
       passwordModal.style.display = "none";
     }
   };
 
-  initSocket(); // initialize the socket connection
+  initSocket();
 });
