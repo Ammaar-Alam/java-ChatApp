@@ -4,7 +4,7 @@ This project is a real-time chat application built with Node.js, Express, and So
 
 ## Live Demo
 
-Experience the live chat without any setup. Join the conversation now on [my website](http://webchat.ammaar.xyz).
+Experience the live chat without any setup. Join the conversation now on [my website](https://webchat.ammaar.xyz).
 
 ## Features
 
