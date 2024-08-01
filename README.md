@@ -59,3 +59,4 @@ This branch is used for implementing and testing new features before pulling to 
    - ~~Add updated console logs (showing when a room is created in console and displaying its password; showing when a user leaves and joins a room)~~
    - ~~Add ability for users to change their rooms as they please by clicking on any rooms in the available list on the right column~~
    - ~~Fix bug where if a user enters an incorrect password for a room, their messages no long appear client-side in their current room~~
+   - Save messages server-side instead of client sisde so they won't disappear on user refresh
