@@ -9,7 +9,7 @@ const io = socketIo(server);
 
 app.use(express.static(path.join(__dirname)));
 
-let rooms = {}; // stores room details including users and passwords
+let rooms = {}; // stores room details including users, passwords, and messages
 
 io.on("connection", (socket) => {
   socket.emit("update room list", Object.keys(rooms));
@@ -24,10 +24,7 @@ io.on("connection", (socket) => {
     if (addedUser && currentRoom) {
       if (rooms[currentRoom]) {
         delete rooms[currentRoom].users[socket.id];
-        io.in(currentRoom).emit(
-          "update user list",
-          Object.values(rooms[currentRoom].users),
-        );
+        io.in(currentRoom).emit("update user list", Object.values(rooms[currentRoom].users));
         io.in(currentRoom).emit("message", {
           systemMessage: true,
           message: `${socket.username} left the chat`,
@@ -63,10 +60,7 @@ io.on("connection", (socket) => {
     if (currentRoom) {
       socket.leave(currentRoom);
       delete rooms[currentRoom].users[socket.id];
-      io.in(currentRoom).emit(
-        "update user list",
-        Object.values(rooms[currentRoom].users),
-      );
+      io.in(currentRoom).emit("update user list", Object.values(rooms[currentRoom].users));
       io.in(currentRoom).emit("message", {
         systemMessage: true,
         message: `${socket.username} left the chat`,
@@ -89,7 +83,7 @@ io.on("connection", (socket) => {
     socket.username = username;
 
     if (!rooms[room]) {
-      rooms[room] = { password: password || null, users: {} };
+      rooms[room] = { password: password || null, users: {}, messages: [] };
       console.log(`Room created: ${room} with password: ${password || "none"}`);
     }
 
@@ -102,24 +96,30 @@ io.on("connection", (socket) => {
     io.in(room).emit("update user list", usersInRoom);
     io.emit("update room list", Object.keys(rooms));
 
+    // Send existing messages to the new user
+    socket.emit("load messages", rooms[room].messages);
+
     socket.emit("user joined", { username: socket.username, room: room });
-    io.in(room).emit("message", {
+    const joinMessage = {
       systemMessage: true,
       message: `${socket.username} joined the chat`,
-    });
+    };
+    rooms[room].messages.push(joinMessage);
+    io.in(room).emit("message", joinMessage);
 
     console.log(`${socket.username} joined room: ${room}`);
   }
 
   socket.on("sendMessage", (data) => {
     if (!addedUser || !currentRoom) return;
-    io.in(currentRoom).emit("message", {
+    const messageData = {
       username: socket.username,
       message: data.message,
-    });
-    console.log(
-      `Message from ${socket.username} in room ${currentRoom}: ${data.message}`,
-    );
+      timestamp: new Date().toISOString(),
+    };
+    rooms[currentRoom].messages.push(messageData);
+    io.in(currentRoom).emit("message", messageData);
+    console.log(`Message from ${socket.username} in room ${currentRoom}: ${data.message}`);
   });
 
   socket.on("get room info", (roomName, callback) => {
