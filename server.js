@@ -110,6 +110,37 @@ io.on("connection", (socket) => {
     console.log(`${socket.username} joined room: ${room}`);
   }
 
+  // open source (stolen) function to keep app running, otherwise it shuts down and then website
+  // loading time is too long for ammaar (7 seconds)
+  // ~ done on behalf of ammaar by peter while he sorts out life <3
+  function startKeepAlive() {
+    setInterval(
+      function () {
+        var options = {
+          host: "webchat.ammaar.xyz",
+          port: 80,
+          path: "/",
+        };
+        http
+          .get(options, function (res) {
+            res.on("data", function (chunk) {
+              try {
+                // optional logging... can disable if everything works
+                console.log("HEROKU RESPONSE: " + chunk);
+              } catch (err) {
+                console.log(err.message);
+              }
+            });
+          })
+          .on("error", function (err) {
+            console.log("Error: " + err.message);
+          });
+      },
+      20 * 60 * 1000,
+    ); // load every 20 minutes
+  }
+  startKeepAlive();
+
   socket.on("sendMessage", (data) => {
     if (!addedUser || !currentRoom) return;
     const messageData = {
