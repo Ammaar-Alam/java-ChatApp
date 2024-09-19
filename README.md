@@ -6,7 +6,7 @@ This project is a real-time chat application built with Node.js, Express, and So
 
 Experience the live chat without any setup. Join the conversation now on [my website](https://webchat.ammaar.xyz).
 
-*(NOTE: The site is hosted using Heroku dynos, which go to sleep after an hour of inactivity; so the first time loading into the site might take a few seconds.)*
+*(NOTE: The site is hosted using Heroku's free dynos, which go to sleep after an hour of inactivity; so the first time loading into the site might take a few seconds.)*
 
 ## Features
 
