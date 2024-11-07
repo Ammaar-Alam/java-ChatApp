@@ -6,7 +6,10 @@
         <link rel="stylesheet" href="styles.css" />
         <script src="/socket.io/socket.io.js"></script>
         <script defer src="script.js"></script>
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+        <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+        />
     </head>
     <body>
         <div class="chat-container">
@@ -24,7 +27,7 @@
                             </a>
                         </li>
                         <li>
-                            <a href="https://github.com/Ammaar-Alam/doorUnlocker" target="_blank">
+                            <a href="https://github.com/Ammaar-Alam/java-chatapp" target="_blank">
                                 <i class="fab fa-github"></i> GitHub
                             </a>
                         </li>
@@ -47,11 +50,7 @@
                     <!-- Dynamically populated chat messages -->
                 </ul>
                 <form id="form" class="input-area">
-                    <input
-                        id="input"
-                        autocomplete="off"
-                        placeholder="Type your message here..."
-                    />
+                    <input id="input" autocomplete="off" placeholder="Type your message here..." />
                     <button type="submit">Send</button>
                 </form>
             </div>
@@ -70,12 +69,7 @@
                 autocomplete="off"
                 placeholder="Enter your username"
             />
-            <input
-                type="text"
-                id="roomInput"
-                autocomplete="off"
-                placeholder="Enter room name"
-            />
+            <input type="text" id="roomInput" autocomplete="off" placeholder="Enter room name" />
             <input
                 type="password"
                 id="passwordInput"
@@ -90,11 +84,7 @@
             <div class="modal-content">
                 <span id="closeModal" class="close">&times;</span>
                 <p>Enter the password for the room:</p>
-                <input
-                    type="password"
-                    id="modalPasswordInput"
-                    placeholder="Room password"
-                />
+                <input type="password" id="modalPasswordInput" placeholder="Room password" />
                 <button id="modalSubmit">Submit</button>
             </div>
         </div>
