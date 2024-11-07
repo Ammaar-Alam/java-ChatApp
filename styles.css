@@ -210,3 +210,58 @@ body {
 .room-list li:hover {
     background-color: #555; /* Highlight room on hover */
 }
+
+/* Social Links Styles */
+.social-links-container {
+    padding: 20px 10px;
+    background-color: #444;
+    margin-top: auto;
+}
+
+.social-links-container h3 {
+    color: #fff;
+    text-align: center;
+    margin-bottom: 15px;
+    font-size: 1.1em;
+}
+
+.social-links {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.social-links li {
+    margin: 10px 0;
+    transition: transform 0.2s ease;
+}
+
+.social-links li:hover {
+    transform: translateX(5px);
+}
+
+.social-links a {
+    color: #fff;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    padding: 8px 12px;
+    border-radius: 5px;
+    transition: background-color 0.2s ease;
+}
+
+.social-links a:hover {
+    background-color: #555;
+}
+
+.social-links i {
+    margin-right: 10px;
+    width: 20px;
+    text-align: center;
+}
+
+/* Update user-list to accommodate social links */
+.user-list {
+    display: flex;
+    flex-direction: column;
+}
