@@ -1,0 +1,31 @@
+{
+  "test": {
+    "password": "",
+    "messages": [
+      {
+        "systemMessage": true,
+        "message": "test joined the chat"
+      },
+      {
+        "username": "test",
+        "message": "tesiting",
+        "timestamp": "2024-11-08T03:59:27.276Z"
+      },
+      {
+        "username": "test",
+        "message": "omg",
+        "timestamp": "2024-11-08T03:59:27.864Z"
+      },
+      {
+        "username": "test",
+        "message": "itw orks again",
+        "timestamp": "2024-11-08T03:59:29.805Z"
+      },
+      {
+        "username": "test",
+        "message": "let's go",
+        "timestamp": "2024-11-08T03:59:30.829Z"
+      }
+    ]
+  }
+}

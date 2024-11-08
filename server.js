@@ -151,8 +151,174 @@ app.get("/api/sync/rooms", async (req, res) => {
   }
 });
 
-// Socket.IO event handlers remain mostly the same, just remove MongoDB references
-// ... rest of your socket.io code ...
+// Socket.IO event handlers
+io.on("connection", (socket) => {
+  socket.emit("update room list", Object.keys(rooms));
+  const allUsers = Array.from(rooms.values()).flatMap(room => room.getUsers());
+  socket.emit("update user list", allUsers);
+  console.log("New client connected");
+
+  let addedUser = false;
+  let currentRoom = "";
+
+  socket.on("disconnect", () => {
+    if (addedUser && currentRoom) {
+      const room = rooms.get(currentRoom);
+      if (room) {
+        room.removeUser(socket.id);
+        io.to(currentRoom).emit("update user list", room.getUsers());
+        const leaveMessage = {
+          systemMessage: true,
+          message: `${socket.username} left the chat`,
+        };
+        room.addMessage(leaveMessage);
+        io.to(currentRoom).emit("message", leaveMessage);
+      }
+      console.log(`${socket.username} disconnected from ${currentRoom}`);
+    }
+  });
+
+  socket.on("add user", ({ username, room, password }) => {
+    if (addedUser && currentRoom && currentRoom !== room) {
+      validatePassword(room, password, (isValid) => {
+        if (isValid) {
+          switchRoom(socket, { room, username });
+        } else {
+          socket.emit("password incorrect");
+          console.log(`Password incorrect for room: ${room}`);
+        }
+      });
+    } else {
+      validatePassword(room, password, (isValid) => {
+        if (isValid) {
+          joinRoom(socket, { room, username, password });
+        } else {
+          socket.emit("password incorrect");
+          console.log(`Password incorrect for room: ${room}`);
+        }
+      });
+    }
+  });
+
+  function switchRoom(socket, { room, username }) {
+    if (currentRoom) {
+      const oldRoom = rooms.get(currentRoom);
+      if (oldRoom) {
+        socket.leave(currentRoom);
+        oldRoom.removeUser(socket.id);
+        io.to(currentRoom).emit("update user list", oldRoom.getUsers());
+        const leaveMessage = {
+          systemMessage: true,
+          message: `${socket.username} left the chat`,
+        };
+        oldRoom.addMessage(leaveMessage);
+        io.to(currentRoom).emit("message", leaveMessage);
+        console.log(`${socket.username} left room: ${currentRoom}`);
+      }
+    }
+
+    joinRoom(socket, { room, username });
+  }
+
+  function validatePassword(room, password, callback) {
+    const chatRoom = rooms.get(room);
+    if (!chatRoom || !chatRoom.password || chatRoom.password === password) {
+      callback(true);
+    } else {
+      callback(false);
+    }
+  }
+
+  function joinRoom(socket, { username, room, password }) {
+    socket.username = username;
+
+    if (!rooms.has(room)) {
+      rooms.set(room, new ChatRoom(password));
+      console.log(`Room created: ${room} with password: ${password || "none"}`);
+    }
+
+    const chatRoom = rooms.get(room);
+    addedUser = true;
+    currentRoom = room;
+    chatRoom.addUser(socket.id, username);
+    socket.join(room);
+
+    io.to(room).emit("update user list", chatRoom.getUsers());
+    io.emit("update room list", Array.from(rooms.keys()));
+
+    // Send existing messages to the new user
+    socket.emit("load messages", chatRoom.messages);
+
+    socket.emit("user joined", { username: socket.username, room: room });
+    const joinMessage = {
+      systemMessage: true,
+      message: `${socket.username} joined the chat`,
+    };
+    chatRoom.addMessage(joinMessage);
+    io.to(room).emit("message", joinMessage);
+
+    console.log(`${socket.username} joined room: ${room}`);
+    
+    // Save rooms after changes
+    saveRooms().catch(err => console.error("Failed to save rooms:", err));
+  }
+
+  socket.on("sendMessage", (data) => {
+    if (!addedUser || !currentRoom) return;
+    
+    const room = rooms.get(currentRoom);
+    if (!room) return;
+
+    const messageData = {
+      username: socket.username,
+      message: data.message,
+      timestamp: new Date().toISOString(),
+    };
+    room.addMessage(messageData);
+    io.to(currentRoom).emit("message", messageData);
+    console.log(`Message from ${socket.username} in room ${currentRoom}: ${data.message}`);
+    
+    // Save rooms after new message
+    saveRooms().catch(err => console.error("Failed to save rooms:", err));
+  });
+
+  socket.on("get room info", (roomName, callback) => {
+    const room = rooms.get(roomName);
+    if (room) {
+      callback({ passwordRequired: !!room.password });
+    } else {
+      callback({ passwordRequired: false });
+    }
+  });
+
+  // Keep-alive functionality
+  function startKeepAlive() {
+    setInterval(
+      function () {
+        var options = {
+          host: "webchat.ammaar.xyz",
+          port: 80,
+          path: "/",
+        };
+        http
+          .get(options, function (res) {
+            res.on("data", function (chunk) {
+              try {
+                console.log("HEROKU RESPONSE: " + chunk);
+              } catch (err) {
+                console.log(err.message);
+              }
+            });
+          })
+          .on("error", function (err) {
+            console.log("Error: " + err.message);
+          });
+      },
+      20 * 60 * 1000, // load every 20 minutes
+    );
+  }
+  startKeepAlive();
+});
 
 // Initialize storage and start server
 initStorage().then(() => {
