@@ -153,8 +153,11 @@ app.get("/api/sync/rooms", async (req, res) => {
 
 // Socket.IO event handlers
 io.on("connection", (socket) => {
-  socket.emit("update room list", Object.keys(rooms));
-  const allUsers = Array.from(rooms.values()).flatMap(room => room.getUsers());
+  // Correctly retrieve the room list from the Map
+  socket.emit("update room list", Array.from(rooms.keys()));
+
+  // Update the way you retrieve all users
+  const allUsers = Array.from(rooms.values()).flatMap((room) => room.getUsers());
   socket.emit("update user list", allUsers);
   console.log("New client connected");
 
@@ -258,14 +261,14 @@ io.on("connection", (socket) => {
     io.to(room).emit("message", joinMessage);
 
     console.log(`${socket.username} joined room: ${room}`);
-    
+
     // Save rooms after changes
-    saveRooms().catch(err => console.error("Failed to save rooms:", err));
+    saveRooms().catch((err) => console.error("Failed to save rooms:", err));
   }
 
   socket.on("sendMessage", (data) => {
     if (!addedUser || !currentRoom) return;
-    
+
     const room = rooms.get(currentRoom);
     if (!room) return;
 
@@ -277,9 +280,9 @@ io.on("connection", (socket) => {
     room.addMessage(messageData);
     io.to(currentRoom).emit("message", messageData);
     console.log(`Message from ${socket.username} in room ${currentRoom}: ${data.message}`);
-    
+
     // Save rooms after new message
-    saveRooms().catch(err => console.error("Failed to save rooms:", err));
+    saveRooms().catch((err) => console.error("Failed to save rooms:", err));
   });
 
   socket.on("get room info", (roomName, callback) => {

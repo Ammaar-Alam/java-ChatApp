@@ -25,6 +25,49 @@
         "username": "test",
         "message": "let's go",
         "timestamp": "2024-11-08T03:59:30.829Z"
+      },
+      {
+        "systemMessage": true,
+        "message": "test joined the chat",
+        "timestamp": "2024-11-08T16:52:40.870Z"
+      },
+      {
+        "systemMessage": true,
+        "message": "test joined the chat"
+      },
+      {
+        "username": "test",
+        "message": "te",
+        "timestamp": "2024-11-08T16:55:23.354Z"
+      },
+      {
+        "username": "test",
+        "message": "ok",
+        "timestamp": "2024-11-08T16:55:25.009Z"
+      },
+      {
+        "username": "test",
+        "message": "ig",
+        "timestamp": "2024-11-08T16:55:25.520Z"
+      },
+      {
+        "systemMessage": true,
+        "message": "test2 joined the chat"
+      },
+      {
+        "username": "test2",
+        "message": "omg",
+        "timestamp": "2024-11-08T16:56:22.798Z"
+      },
+      {
+        "username": "test2",
+        "message": "it works",
+        "timestamp": "2024-11-08T16:56:23.740Z"
+      },
+      {
+        "username": "test2",
+        "message": "let's goooo",
+        "timestamp": "2024-11-08T16:56:25.060Z"
       }
     ]
   }
